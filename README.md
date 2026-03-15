@@ -16,99 +16,139 @@ npm install
 
 # 4. Запустить проект в режиме разработки
 npm run dev
+```
+
+## Как поменять хост backend
+
+Хост задается как константа в `vite.config.ts`:
+
+- `__API__`: базовый URL backend
+- `__API_LOGGING__`: включение логирования API
+
+Измените значение `__API__` и перезапустите dev-сервер.
 
 ## Методология
 
-В проекте используется методология FSD - в последнее время довольно популярная. Проект состоит из папок с разным уровнем ответсвенности: app, pages, widgets, features, entities, shared
-Подробнее далее...
+В проекте используется FSD-подобная структура: `app`, `pages`, `widgets`, `features`, `entities`, `shared`.
 
 ### App
 
-Согласно методолгии, app - папка, в которой находятся структуры, используемые во всем приложении. Ровно это и там и находится
+`app` — глобальные конструкции приложения: провайдеры, роутинг, темы, глобальные стили, типы.
 
-```
-───app
-│ |  │
-│ |  │
-│ |  │
-│ |  └───providers
-│ |      │   ErrorBoundary
-│ |      │   StoreProvider
-│ |      │   router
-│ └─────── styles
-└───types    │   providers
-             │   themes
-             │   globalStyles.ts
+```text
+app/
+  providers/
+    ErrorBoundary/
+    StoreProvider/
+    router/
+  styles/
+    providers/
+    themes/
+    globalStyles.ts
+  types/
 ```
 
 #### Providers
 
-Там самые нужные провайдеры, котоыре нужны на начальном этапе разработки приложения: ErrorBoundary - ловим ошибки, StoreProvider - организация RTK, router - организация react-router-dom
+- `ErrorBoundary` — перехват ошибок в React-дереве.
+- `StoreProvider` — настройка Redux Toolkit и RTK Query middleware.
+- `router` — конфигурация маршрутов и защита приватных роутов.
 
 #### Styles
 
-Организация styled-components - темы, глобальные стили, удобная работа с библиотекой для комфортной разработки
+- `styled-components` темы (`light`, `dark`, `baseTheme`).
+- глобальные стили приложения.
 
-#### Pages
+### Pages
 
-Страницы вашего приложения, в шаблоне главная и Not Found 404 - считаю для начала этого достаточно, можно было бы добавить страницу с ошибкой, но она слишком специфична по логике, ее только самому и писать
+Страницы приложения (`Login`, `Register`, `MainPage`, `NotFoundPage`).
 
-# Widgets
+### Widgets
 
-Собрал там основные компоненты для страницы - Page, PageLoader, PageError. Page - тот же main, но с опциональной логикой функцией сохранения скролла при редиректе
+Крупные переиспользуемые блоки:
+
+- `Page` — обертка страницы с сохранением скролла.
+- `PageLoader` — индикатор загрузки страницы.
+- `PageError` — отображение критической ошибки.
 
 ### Features
 
-Продолжение тем, языков и UI слой для сохранения состояния скролла и темы - очень гибкий раздел, его можно использовать повсюду, поэтому в Entities, причем он достаточно тематичен, чтобы не быть в Shared
+Функциональные пользовательские возможности:
+
+- `LanguageSwitcher`
+- `ThemeSwitcher`
+- `UI` (тема + scroll state)
 
 ### Entities
 
-Там только сущность пользователя и Auth. Есть сразу авторизация, аутентификая, 0Auth2.0 от Гугла, Гитхаба, ВК, Дискорда, Яндекса - выбирайте
+Доменные сущности (сейчас в основном `User`):
+
+- `api/` — endpoints для RTK Query
+- `model/` — types + slice
+- `lib/` — токен-хелперы (`authToken.ts`)
 
 ### Shared
 
-структура:
+Общие модульные зависимости проекта:
 
-```
-───shared
-│
-└───api
-│
-└───config
-│      |
-│      └───i18n
-│
-└───consts
-│
-└───lib
-│    |
-│    └───components/DynamicModuleLoader
-│    └───hooks
-│    └───store
-│
-└───types
-|
-└───ui
-     |
-     └───AppImage
-     └───Loader
-     └───Portal
-     └───Stack
-
+```text
+shared/
+  api/
+  config/
+    i18n/
+  consts/
+  lib/
+    components/DynamicModuleLoader/
+    hooks/
+    logger/
+    store/
+  types/
+  ui/
+    AppImage/
+    Loader/
+    Portal/
+    Stack/
 ```
 
 #### i18n
 
-i18n полностью настроенный, в public можно писать переводы в en и ru json-файлы
+Локализация уже настроена (`public/locales/en`, `public/locales/ru`).
 
 #### lib
 
-DynamicModuleLoader - ленивая загрузка слайсов RTK
-
-hooks - собрание жизненно необходимых хуков: useAppDispatch, useAppSelector - от RTK, useInitialEffect, useDebounce, useThrottling, useInfiniteScroll, useHover, useDispatchedActions
-
-store - buildSelector и buildSlice являются невероятно полезными надстойками над RTK. благодаря buildSlice можно не использовать useDispatch 90% разработки, всю работу делает хук внутри. я, когда писал это, в таком восторге был, надеюсь, вы тоже
+- `DynamicModuleLoader` — динамическая подгрузка reducers.
+- `hooks` — `useAppDispatch`, `useAppSelector`, `useDebounce`, `useThrottling`, `useInfiniteScroll`, `useHover`, `useDispatchedActions`.
+- `store` — `buildSlice` и `buildSelector`.
+- `logger` — централизованный логгер API.
 
 #### UI
 
-Самые необходимые (кроме Loader) компоненты, которые серьезно помогают в разработке. HSatck и VStack - flex-контейнеры с flex-direction row и column соответственно
+Базовые компоненты UI-kit:
+
+- `AppImage`
+- `Loader`
+- `Portal`
+- `Stack` (`Flex`, `HStack`, `VStack`)
+
+## Что уже реализовано для хакатона
+
+- Реальные API-запросы для auth вместо заглушек.
+- `Authorization` заголовок в централизованном API-слое.
+- Авто-logout и редирект на `/login` при `401`.
+- Запрос данных главной страницы (`GET /main`).
+- Логирование всех API-запросов и ответов (RTK Query + Axios).
+
+## Команды
+
+```bash
+npm run dev
+npm run build
+npm run lint
+```
+
+## Документация
+
+- `docs/BACKEND_INTEGRATION_SPEC.md` — полный контракт для backend.
+- `docs/API_MIGRATION_CHECKLIST.md` — чеклист миграции API и ручной проверки.
+- `docs/ARCHITECTURE_REVIEW.md` — обзор архитектуры и рекомендации.
+- `docs/FIGMA_AI_SETUP.md` — как использовать Figma AI под эту заготовку.

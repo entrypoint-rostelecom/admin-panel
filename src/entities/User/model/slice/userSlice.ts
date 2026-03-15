@@ -13,6 +13,11 @@ const userSlice = buildSlice({
 	reducers: {
 		setAuthData: (state, action: PayloadAction<User>) => {
 			state.authData = action.payload;
+			state._inited = true;
+		},
+		clearAuthData: (state) => {
+			state.authData = undefined;
+			state._inited = true;
 		},
 	},
 });

@@ -1,10 +1,6 @@
-declare module "*.module.css" {
-	const classes: Record<string, string>;
-	export default classes;
-}
-
 declare const __IS_DEV__: boolean;
 declare const __API__: string;
+declare const __API_LOGGING__: boolean;
 
 type DeepPartial<T> = T extends object
 	? {

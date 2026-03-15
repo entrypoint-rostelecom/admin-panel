@@ -4,18 +4,27 @@ import { Page } from "@/widgets/Page";
 import { useAppSelector } from "@/shared/lib/hooks";
 import { Link } from "react-router-dom";
 import { getRouteLogin, getRouteRegister } from "@/shared/consts/router";
-import { useUserActions } from "@/entities/User";
-import { USER_ACCESS_TOKEN } from "@/shared/consts/localStorage";
+import { clearAccessToken, useSignOutMutation, useUserActions } from "@/entities/User";
+import { useGetMainDataQuery } from "../api/mainPageApi";
 import classes from "./MainPage.module.css";
 
 const MainPage = memo(() => {
 	const { t } = useTranslation("main");
 	const user = useAppSelector((state) => state.user.authData);
-	const { setAuthData } = useUserActions();
+	const { clearAuthData } = useUserActions();
+	const [signOut] = useSignOutMutation();
+	const { data: mainData, isLoading: isMainDataLoading } = useGetMainDataQuery(undefined, {
+		skip: !user,
+	});
 
 	const onLogout = () => {
-		localStorage.removeItem(USER_ACCESS_TOKEN);
-		setAuthData(undefined as any);
+		signOut(undefined)
+			.unwrap()
+			.catch(() => undefined)
+			.then(() => {
+				clearAccessToken();
+				clearAuthData();
+			});
 	};
 
 	return (
@@ -28,6 +37,8 @@ const MainPage = memo(() => {
 						<p>
 							Вы вошли как: <strong>{user.username}</strong>
 						</p>
+						{isMainDataLoading ? <p>Загрузка данных главной...</p> : null}
+						{mainData ? <p>Данные с сервера: {mainData.message}</p> : null}
 						<button onClick={onLogout}>Выйти</button>
 					</>
 				) : (

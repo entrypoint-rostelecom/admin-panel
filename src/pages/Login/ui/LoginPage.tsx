@@ -1,5 +1,4 @@
-import { SignInDto, useSignInMutation, useUserActions } from "@/entities/User";
-import { USER_ACCESS_TOKEN } from "@/shared/consts/localStorage";
+import { SignInDto, setAccessToken, useSignInMutation, useUserActions } from "@/entities/User";
 import { getRouteMain } from "@/shared/consts/router";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +19,7 @@ const LoginPage = () => {
 		signIn(authData)
 			.unwrap()
 			.then((user) => {
-				localStorage.setItem(USER_ACCESS_TOKEN, user.accessToken);
+				setAccessToken(user.accessToken);
 				setAuthDataRedux(user);
 				nav(getRouteMain());
 			})
@@ -32,7 +31,7 @@ const LoginPage = () => {
 	return (
 		<div className={classes.root}>
 			<p className={classes.hint}>
-				Для входа используйте логин/пароль: <b>admin / admin</b>.
+				Для входа используйте логин/пароль:
 			</p>
 			<form onSubmit={onSubmit}>
 				<input
