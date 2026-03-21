@@ -6,7 +6,8 @@ import {
 	useAdminLogoutMutation, 
 	useUserActions,
 	useGetAdminUsersQuery,
-	useGetAccessLogsQuery
+	useGetAccessLogsQuery,
+	getUserData
 } from "@/entities/User";
 import {
 	getRouteDashboard,
@@ -36,8 +37,8 @@ const SecurityLogsPage = memo(() => {
 	const [adminLogout] = useAdminLogoutMutation();
 	const { clearAuthData } = useUserActions();
 
-	const { data: users = [] } = useGetAdminUsersQuery(undefined, { pollingInterval: 3000 });
-	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery(undefined, { pollingInterval: 3000 });
+	const { data: users = [] } = useGetAdminUsersQuery();
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
 
 	const [search, setSearch] = useState("");
 	const [dateFilter, setDateFilter] = useState("");
@@ -165,11 +166,11 @@ const SecurityLogsPage = memo(() => {
 					<div className={classes.topbarRight}>
 						<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 							<span className={classes.profileInfo}>
-								<span className={classes.profileName}>Иванова А.С.</span>
+								<span className={classes.profileName}>{getUserData()?.username || "Без имени"}</span>
 								<span className={classes.profileRole}>Администратор</span>
 							</span>
 							<span className={classes.profileAvatar}>
-								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+								{(getUserData()?.username || "U")[0].toUpperCase()}
 							</span>
 						</button>
 						{isProfileOpen ? (

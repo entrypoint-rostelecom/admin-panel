@@ -1,4 +1,4 @@
-import { clearAccessToken, useAdminLogoutMutation, useUserActions } from "@/entities/User";
+import { clearAccessToken, useAdminLogoutMutation, useUserActions, getUserData } from "@/entities/User";
 import {
 	getRouteDashboard,
 	getRouteDevices,
@@ -61,8 +61,8 @@ const PassesPage = memo(() => {
 			});
 	};
 
-	const { data: users = [] } = useGetAdminUsersQuery(undefined, { pollingInterval: 3000 });
-	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery(undefined, { pollingInterval: 3000 });
+	const { data: users = [] } = useGetAdminUsersQuery();
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
 
 	const [scannerFilter, setScannerFilter] = useState("Все сканеры");
 	const [resultFilter, setResultFilter] = useState("Все результаты");
@@ -139,10 +139,10 @@ const PassesPage = memo(() => {
 
 					<button className={classes.passesPage__profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 						<span className={classes.passesPage__profileInfo}>
-							<span className={classes.passesPage__profileName}>Иванова А.С.</span>
+							<span className={classes.passesPage__profileName}>{getUserData()?.username || "Без имени"}</span>
 							<span className={classes.passesPage__profileRole}>Администратор</span>
 						</span>
-						<span className={classes.passesPage__profileAvatar}>AS</span>
+						<span className={classes.passesPage__profileAvatar}>{(getUserData()?.username || "U")[0].toUpperCase()}</span>
 					</button>
 					{isProfileOpen ? (
 						<div className={classes.passesPage__profileMenu}>

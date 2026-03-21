@@ -7,6 +7,7 @@ import {
 	useGetAdminUsersQuery,
 	useAdminLogoutMutation,
 	useUserActions,
+	getUserData,
 } from "@/entities/User";
 import {
 	getRouteDashboard,
@@ -171,10 +172,10 @@ const UsersPage = memo(() => {
 
 					<button className={classes.usersPage__profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 						<span className={classes.usersPage__profileInfo}>
-							<span className={classes.usersPage__profileName}>Иванова А.С.</span>
+							<span className={classes.usersPage__profileName}>{getUserData()?.username || "Без имени"}</span>
 							<span className={classes.usersPage__profileRole}>Администратор</span>
 						</span>
-						<span className={classes.usersPage__profileAvatar}>AS</span>
+						<span className={classes.usersPage__profileAvatar}>{(getUserData()?.username || "U")[0].toUpperCase()}</span>
 					</button>
 					
 					{isProfileOpen ? (

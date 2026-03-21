@@ -6,7 +6,8 @@ import {
 	useAdminLogoutMutation,
 	useUserActions,
 	useGetAdminUsersQuery,
-	useGetAccessLogsQuery
+	useGetAccessLogsQuery,
+	getUserData
 } from "@/entities/User";
 import {
 	getRouteDashboard,
@@ -37,21 +38,26 @@ const DashboardPage = memo(() => {
 	const [adminLogout] = useAdminLogoutMutation();
 	const { clearAuthData } = useUserActions();
 
-	const { data: users = [], isLoading: isUsersLoading } = useGetAdminUsersQuery(undefined, { pollingInterval: 3000 });
-	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery(undefined, { pollingInterval: 3000 });
+	const { data: users = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
+
+	// Backend might return "false", "0", or false. We normalize it.
+	const isTruthy = (val: any) => val === true || val === "true" || val === 1 || val === "1";
+	const isFalsy = (val: any) => val === false || val === "false" || val === 0 || val === "0" || !val;
 
 	const activeLastMonthCount = useMemo(() => {
 		const monthAgo = new Date();
 		monthAgo.setMonth(monthAgo.getMonth() - 1);
-		return users.filter(u => u.is_active && new Date(u.created_at) >= monthAgo).length;
+		return users.filter(u => isTruthy(u.is_active) && new Date(u.created_at) >= monthAgo).length;
 	}, [users]);
 
 	const totalBlockedCount = useMemo(() => {
-		return users.filter(u => !u.is_active).length;
+		// Include users specifically marked as NOT active
+		return users.filter(u => isFalsy(u.is_active)).length;
 	}, [users]);
 
 	const insideCount = useMemo(() => {
-		return users.filter(u => u.is_inside).length;
+		return users.filter(u => isTruthy(u.is_inside)).length;
 	}, [users]);
 
 	const recentEvents = useMemo(() => {
@@ -112,10 +118,10 @@ const DashboardPage = memo(() => {
 
 					<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 						<span className={classes.profileInfo}>
-							<span className={classes.profileName}>Иванова А.С.</span>
+							<span className={classes.profileName}>{getUserData()?.username || "Без имени"}</span>
 							<span className={classes.profileRole}>Администратор</span>
 						</span>
-						<span className={classes.profileAvatar}>AS</span>
+						<span className={classes.profileAvatar}>{(getUserData()?.username || "U")[0].toUpperCase()}</span>
 					</button>
 
 					{isProfileOpen ? (
