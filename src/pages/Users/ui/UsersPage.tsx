@@ -1,7 +1,16 @@
 import { clearAccessToken, useSignOutMutation, useUserActions } from "@/entities/User";
-import { getRouteMain } from "@/shared/consts/router";
+import {
+	getRouteDashboard,
+	getRouteDevices,
+	getRouteMain,
+	getRoutePasses,
+	getRouteRequests,
+	getRouteSecurityLogs,
+	getRouteSystemSettings,
+	getRouteUsers,
+} from "@/shared/consts/router";
 import { memo, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Page } from "@/widgets/Page";
 import classes from "./UsersPage.module.css";
 
@@ -19,13 +28,13 @@ interface UserRow {
 }
 
 const NAV_ITEMS = [
-	"Дашборд",
-	"Заявки",
-	"Пользователи",
-	"Проходы",
-	"Устройства",
-	"Настройки системы",
-	"Логи безопасности",
+	{ label: "Дашборд", path: getRouteDashboard() },
+	{ label: "Заявки", path: getRouteRequests() },
+	{ label: "Пользователи", path: getRouteUsers() },
+	{ label: "Проходы", path: getRoutePasses() },
+	{ label: "Устройства", path: getRouteDevices() },
+	{ label: "Настройка системы", path: getRouteSystemSettings() },
+	{ label: "Логи безопасности", path: getRouteSecurityLogs() },
 ];
 
 const TABLE_HEAD = ["ФИО", "Логин", "Роль", "Офис", "Статус", "Последний вход", "Последний проход", "Проходов сегодня"];
@@ -84,7 +93,6 @@ const INITIAL_USERS: UserRow[] = [
 ];
 
 const UsersPage = memo(() => {
-	const [activeNavItem, setActiveNavItem] = useState("Пользователи");
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | UserStatus>("all");
 	const [officeFilter, setOfficeFilter] = useState("all");
@@ -99,6 +107,7 @@ const UsersPage = memo(() => {
 		password: "",
 	});
 	const nav = useNavigate();
+	const location = useLocation();
 	const [signOut] = useSignOutMutation();
 	const { clearAuthData } = useUserActions();
 
@@ -190,16 +199,16 @@ const UsersPage = memo(() => {
 					<aside className={classes.usersPage__sidebar}>
 						<nav className={classes.usersPage__nav}>
 							{NAV_ITEMS.map((item) => {
-								const isActive = item === activeNavItem;
+								const isActive = location.pathname === item.path;
 								return (
 									<button
-										key={item}
+										key={item.label}
 										type="button"
-										onClick={() => setActiveNavItem(item)}
+										onClick={() => nav(item.path)}
 										className={`${classes.usersPage__navItem} ${isActive ? classes["usersPage__navItem--active"] : ""}`}
 									>
 										<span className={classes.usersPage__navIcon} />
-										<span>{item}</span>
+										<span>{item.label}</span>
 									</button>
 								);
 							})}

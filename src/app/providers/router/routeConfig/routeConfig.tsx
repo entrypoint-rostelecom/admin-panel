@@ -1,6 +1,20 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
-import { AppRoutes, getRouteLogin, getRouteMain, getRouteNotFound, getRouteRegister, getRouteUsers } from "@/shared/consts/router";
+import { LazyPassesPage } from "@/pages/Passes";
+import {
+	AppRoutes,
+	getRouteDashboard,
+	getRouteDevices,
+	getRouteLogin,
+	getRouteMain,
+	getRouteNotFound,
+	getRoutePasses,
+	getRouteRegister,
+	getRouteRequests,
+	getRouteSecurityLogs,
+	getRouteSystemSettings,
+	getRouteUsers,
+} from "@/shared/consts/router";
 import { AppRouteProps } from "@/shared/types/router";
 import { LazyLoginPage } from "@/pages/Login";
 import { LazyRegisterPage } from "@/pages/Register";
@@ -11,9 +25,39 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 		path: getRouteMain(),
 		element: <LazyMainPage />,
 	},
+	[AppRoutes.DASHBOARD]: {
+		path: getRouteDashboard(),
+		element: <NotFoundPage />,
+		authOnly: true,
+	},
+	[AppRoutes.REQUESTS]: {
+		path: getRouteRequests(),
+		element: <NotFoundPage />,
+		authOnly: true,
+	},
 	[AppRoutes.USERS]: {
 		path: getRouteUsers(),
 		element: <LazyUsersPage />,
+		authOnly: true,
+	},
+	[AppRoutes.PASSES]: {
+		path: getRoutePasses(),
+		element: <LazyPassesPage />,
+		authOnly: true,
+	},
+	[AppRoutes.DEVICES]: {
+		path: getRouteDevices(),
+		element: <NotFoundPage />,
+		authOnly: true,
+	},
+	[AppRoutes.SYSTEM_SETTINGS]: {
+		path: getRouteSystemSettings(),
+		element: <NotFoundPage />,
+		authOnly: true,
+	},
+	[AppRoutes.SECURITY_LOGS]: {
+		path: getRouteSecurityLogs(),
+		element: <NotFoundPage />,
 		authOnly: true,
 	},
 	[AppRoutes.NOT_FOUND]: {
