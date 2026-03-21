@@ -1,7 +1,7 @@
 import { SignInDto, UserRoles, setAccessToken, useUserActions } from "@/entities/User";
-import { getRouteUsers } from "@/shared/consts/router";
+import { getRouteLogin, getRouteUsers } from "@/shared/consts/router";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classes from "./RegisterPage.module.css";
 
 const RegisterPage = () => {
@@ -34,28 +34,56 @@ const RegisterPage = () => {
 
 	return (
 		<div className={classes.root}>
-			<p className={classes.hint}>
-				Введите логин/пароль
-			</p>
-			<form onSubmit={onSubmit}>
-				<input
-					className={classes.field}
-					placeholder="Логин"
-					value={authData.login}
-					onChange={(e) => setAuthData((prev) => ({ ...prev, login: e.target.value }))}
-				/>
-				<input
-					className={classes.field}
-					placeholder="Пароль"
-					type="password"
-					value={authData.password}
-					onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
-				/>
-				<button type="submit" className={classes.button}>
-					Зарегистрироваться
-				</button>
-			</form>
-			{error ? <p className={classes.error}>{error}</p> : null}
+			<div className={classes.card}>
+				<div className={classes.logoContainer}>
+					<img 
+						src="/assets/Image/RGB_RT_logo-horizontal_main_ru.png" 
+						alt="Ростелеком" 
+						className={classes.logo} 
+					/>
+				</div>
+
+				<h1 className={classes.title}>Регистрация</h1>
+
+				<form onSubmit={onSubmit} className={classes.form}>
+					<div className={classes.fieldGroup}>
+						<label className={classes.label} htmlFor="login">
+							Логин:
+						</label>
+						<input
+							id="login"
+							className={classes.field}
+							placeholder="Придумайте логин"
+							value={authData.login}
+							onChange={(e) => setAuthData((prev) => ({ ...prev, login: e.target.value }))}
+						/>
+					</div>
+					<div className={classes.fieldGroup}>
+						<label className={classes.label} htmlFor="password">
+							Пароль:
+						</label>
+						<input
+							id="password"
+							className={classes.field}
+							placeholder="Придумайте пароль"
+							type="password"
+							value={authData.password}
+							onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
+						/>
+					</div>
+					<button type="submit" className={classes.button}>
+						Создать аккаунт
+					</button>
+				</form>
+				{error ? <p className={classes.error}>{error}</p> : null}
+
+				<div className={classes.footer}>
+					Уже есть аккаунт?{" "}
+					<Link to={getRouteLogin()} className={classes.link}>
+						Войти
+					</Link>
+				</div>
+			</div>
 		</div>
 	);
 };

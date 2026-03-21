@@ -1,7 +1,7 @@
 import { SignInDto, setAccessToken, useAdminSignInMutation, useUserActions } from "@/entities/User";
-import { getRouteUsers } from "@/shared/consts/router";
+import { getRouteRegister, getRouteUsers } from "@/shared/consts/router";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classes from "./LoginPage.module.css";
 
 const LoginPage = () => {
@@ -35,28 +35,59 @@ const LoginPage = () => {
 
 	return (
 		<div className={classes.root}>
-			<p className={classes.hint}>
-				Для входа используйте логин/пароль:
-			</p>
-			<form onSubmit={onSubmit}>
-				<input
-					className={classes.field}
-					placeholder="Логин"
-					value={authData.login}
-					onChange={(e) => setAuthData((prev) => ({ ...prev, login: e.target.value }))}
-				/>
-				<input
-					className={classes.field}
-					placeholder="Пароль"
-					type="password"
-					value={authData.password}
-					onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
-				/>
-				<button type="submit" className={classes.button} disabled={isLoading}>
-					Войти
-				</button>
-			</form>
-			{error ? <p className={classes.error}>{error}</p> : null}
+			<div className={classes.card}>
+				<div className={classes.logoContainer}>
+					<img 
+						src="/assets/Image/RGB_RT_logo-horizontal_main_ru.png" 
+						alt="Ростелеком" 
+						className={classes.logo} 
+					/>
+				</div>
+
+				<h1 className={classes.title}>Цифровой пропуск</h1>
+
+				<form onSubmit={onSubmit} className={classes.form}>
+					<div className={classes.fieldGroup}>
+						<label className={classes.label} htmlFor="login">
+							Имя пользователя:
+						</label>
+						<input
+							id="login"
+							className={classes.field}
+							placeholder="Введите логин"
+							value={authData.login}
+							onChange={(e) => setAuthData((prev) => ({ ...prev, login: e.target.value }))}
+						/>
+					</div>
+
+					<div className={classes.fieldGroup}>
+						<label className={classes.label} htmlFor="password">
+							Пароль:
+						</label>
+						<input
+							id="password"
+							className={classes.field}
+							placeholder="Введите пароль"
+							type="password"
+							value={authData.password}
+							onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
+						/>
+					</div>
+
+					<button type="submit" className={classes.button} disabled={isLoading}>
+						{isLoading ? "Вход..." : "Войти"}
+					</button>
+
+					{error ? <p className={classes.error}>{error}</p> : null}
+				</form>
+
+				<div className={classes.footer}>
+					Нет аккаунта?{" "}
+					<Link to={getRouteRegister()} className={classes.link}>
+						Зарегистрируйтесь
+					</Link>
+				</div>
+			</div>
 		</div>
 	);
 };

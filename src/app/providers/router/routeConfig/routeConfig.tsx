@@ -25,6 +25,7 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
 		path: getRouteMain(),
 		element: <LazyMainPage />,
+		authOnly: true,
 	},
 	[AppRoutes.DASHBOARD]: {
 		path: getRouteDashboard(),
