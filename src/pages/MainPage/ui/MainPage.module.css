@@ -1,13 +1,41 @@
- .root {
+.root {
 	margin-top: 16px;
 	padding: 16px;
 	border: 1px solid #444;
 	border-radius: 8px;
+	max-width: 740px;
 }
 
-.authInfo {
+.title {
+	margin: 0 0 12px;
+}
+
+.authSection {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.actions {
 	display: flex;
 	gap: 12px;
 	align-items: center;
+}
+
+.link {
+	color: #4c71f2;
+	text-decoration: none;
+}
+
+.link:hover {
+	text-decoration: underline;
+}
+
+.button {
+	padding: 8px 14px;
+	border: 1px solid #444;
+	border-radius: 8px;
+	background: #fff;
+	cursor: pointer;
 }
 

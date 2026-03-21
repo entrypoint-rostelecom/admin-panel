@@ -1,5 +1,5 @@
-import { SignInDto, setAccessToken, useSignInMutation, useUserActions } from "@/entities/User";
-import { getRouteMain } from "@/shared/consts/router";
+import { SignInDto, UserRoles, setAccessToken, useUserActions } from "@/entities/User";
+import { getRouteUsers } from "@/shared/consts/router";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./LoginPage.module.css";
@@ -9,23 +9,27 @@ const LoginPage = () => {
 		email: "",
 		password: "",
 	});
-	const [signIn, { isLoading, error }] = useSignInMutation();
+	const [error, setError] = useState<string>("");
 	const nav = useNavigate();
 	const { setAuthData: setAuthDataRedux } = useUserActions();
 
 	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		signIn(authData)
-			.unwrap()
-			.then((user) => {
-				setAccessToken(user.accessToken);
-				setAuthDataRedux(user);
-				nav(getRouteMain());
-			})
-			.catch(() => {
-				// ошибка уже отобразится ниже через error
-			});
+		if (!authData.email.trim() || !authData.password.trim()) {
+			setError("Заполните email и пароль");
+			return;
+		}
+
+		setError("");
+		const username = authData.email.split("@")[0] || "user";
+		setAccessToken("mock-token");
+		setAuthDataRedux({
+			id: "mock-user-id",
+			username,
+			roles: [UserRoles.ADMIN],
+		});
+		nav(getRouteUsers());
 	};
 
 	return (
@@ -47,11 +51,11 @@ const LoginPage = () => {
 					value={authData.password}
 					onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
 				/>
-				<button type="submit" disabled={isLoading} className={classes.button}>
-					{isLoading ? "Входим..." : "Войти"}
+				<button type="submit" className={classes.button}>
+					Войти
 				</button>
 			</form>
-			{error ? <p className={classes.error}>Неверный логин или пароль</p> : null}
+			{error ? <p className={classes.error}>{error}</p> : null}
 		</div>
 	);
 };

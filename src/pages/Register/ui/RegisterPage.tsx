@@ -1,5 +1,5 @@
-import { SignInDto, setAccessToken, useRegisterMutation, useUserActions } from "@/entities/User";
-import { getRouteMain } from "@/shared/consts/router";
+import { SignInDto, UserRoles, setAccessToken, useUserActions } from "@/entities/User";
+import { getRouteUsers } from "@/shared/consts/router";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import classes from "./RegisterPage.module.css";
@@ -9,23 +9,27 @@ const RegisterPage = () => {
 		email: "",
 		password: "",
 	});
-	const [register, { isLoading, error }] = useRegisterMutation();
+	const [error, setError] = useState<string>("");
 	const nav = useNavigate();
 	const { setAuthData: setAuthDataRedux } = useUserActions();
 
 	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		register(authData)
-			.unwrap()
-			.then((user) => {
-				setAccessToken(user.accessToken);
-				setAuthDataRedux(user);
-				nav(getRouteMain());
-			})
-			.catch(() => {
-				// ошибка уже отобразится ниже через error
-			});
+		if (!authData.email.trim() || !authData.password.trim()) {
+			setError("Введите email и пароль");
+			return;
+		}
+
+		setError("");
+		const username = authData.email.split("@")[0] || "user";
+		setAccessToken("mock-token");
+		setAuthDataRedux({
+			id: "mock-user-id",
+			username,
+			roles: [UserRoles.ADMIN],
+		});
+		nav(getRouteUsers());
 	};
 
 	return (
@@ -47,11 +51,11 @@ const RegisterPage = () => {
 					value={authData.password}
 					onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
 				/>
-				<button type="submit" disabled={isLoading} className={classes.button}>
-					{isLoading ? "Регистрируем..." : "Зарегистрироваться"}
+				<button type="submit" className={classes.button}>
+					Зарегистрироваться
 				</button>
 			</form>
-			{error ? <p className={classes.error}>Ошибка при регистрации</p> : null}
+			{error ? <p className={classes.error}>{error}</p> : null}
 		</div>
 	);
 };
