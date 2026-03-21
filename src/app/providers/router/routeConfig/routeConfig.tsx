@@ -1,6 +1,7 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LazyMainPage } from "@/pages/MainPage";
 import { LazyPassesPage } from "@/pages/Passes";
+import { LazySystemSettingsPage } from "@/pages/SystemSettings";
 import {
 	AppRoutes,
 	getRouteDashboard,
@@ -52,7 +53,7 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	},
 	[AppRoutes.SYSTEM_SETTINGS]: {
 		path: getRouteSystemSettings(),
-		element: <NotFoundPage />,
+		element: <LazySystemSettingsPage />,
 		authOnly: true,
 	},
 	[AppRoutes.SECURITY_LOGS]: {

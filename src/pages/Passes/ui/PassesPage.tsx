@@ -11,6 +11,7 @@ import {
 } from "@/shared/consts/router";
 import { memo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AppButton } from "@/shared/ui";
 import { Page } from "@/widgets/Page";
 import classes from "./PassesPage.module.css";
 
@@ -152,15 +153,17 @@ const PassesPage = memo(() => {
 							{NAV_ITEMS.map((item) => {
 								const isActive = location.pathname === item.path;
 								return (
-									<button
+									<AppButton
 										key={item.label}
 										type="button"
 										onClick={() => nav(item.path)}
-										className={`${classes.passesPage__navItem} ${isActive ? classes["passesPage__navItem--active"] : ""}`}
+										variant="nav"
+										isActive={isActive}
+										iconPlaceholder
+										className={classes.passesPage__navItem}
 									>
-										<span className={classes.passesPage__navIcon} />
 										<span>{item.label}</span>
-									</button>
+									</AppButton>
 								);
 							})}
 						</nav>
@@ -180,9 +183,9 @@ const PassesPage = memo(() => {
 								<h1 className={classes.passesPage__title}>Проходы</h1>
 								<p className={classes.passesPage__subtitle}>Журнал всех событий доступа</p>
 							</div>
-							<button className={classes.passesPage__exportButton} type="button">
+							<AppButton className={classes.passesPage__exportButton} type="button" variant="secondary" iconPlaceholder>
 								Экспорт в CSV
-							</button>
+							</AppButton>
 						</div>
 
 						<div className={classes.passesPage__filters}>
@@ -194,12 +197,12 @@ const PassesPage = memo(() => {
 									onChange={(event) => setSearch(event.target.value)}
 								/>
 							</div>
-							<button className={classes.passesPage__filterButton} type="button">
+							<AppButton className={classes.passesPage__filterButton} type="button" variant="filter" iconPlaceholder>
 								Все сканеры
-							</button>
-							<button className={classes.passesPage__filterButton} type="button">
+							</AppButton>
+							<AppButton className={classes.passesPage__filterButton} type="button" variant="filter" iconPlaceholder>
 								Все результаты
-							</button>
+							</AppButton>
 							<div className={classes.passesPage__dateRange} />
 						</div>
 
