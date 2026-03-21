@@ -29,11 +29,9 @@ interface PassRow {
 
 const NAV_ITEMS = [
 	{ label: "Дашборд", path: getRouteDashboard() },
-	{ label: "Заявки", path: getRouteRequests() },
 	{ label: "Пользователи", path: getRouteUsers() },
 	{ label: "Проходы", path: getRoutePasses() },
 	{ label: "Устройства", path: getRouteDevices() },
-	{ label: "Настройка системы", path: getRouteSystemSettings() },
 	{ label: "Логи безопасности", path: getRouteSecurityLogs() },
 ];
 
@@ -153,28 +151,25 @@ const PassesPage = memo(() => {
 							{NAV_ITEMS.map((item) => {
 								const isActive = location.pathname === item.path;
 								return (
-									<AppButton
+									<button
 										key={item.label}
 										type="button"
 										onClick={() => nav(item.path)}
-										variant="nav"
-										isActive={isActive}
-										iconPlaceholder
-										className={classes.passesPage__navItem}
+										className={`${classes.passesPage__navItem} ${isActive ? classes["passesPage__navItem--active"] : ""}`}
 									>
+										<span className={classes.passesPage__navIcon}>
+											{item.label === "Дашборд" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>}
+											{item.label === "Пользователи" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+											{item.label === "Проходы" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
+											{item.label === "Устройства" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>}
+											{item.label === "Логи безопасности" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>}
+										</span>
 										<span>{item.label}</span>
-									</AppButton>
+									</button>
 								);
 							})}
 						</nav>
 
-						<div className={classes.passesPage__sidebarFooter}>
-							<div className={classes.passesPage__sidebarMark}>Р</div>
-							<div>
-								<p className={classes.passesPage__sidebarName}>Ростелеком</p>
-								<p className={classes.passesPage__sidebarSubname}>Точка входа</p>
-							</div>
-						</div>
 					</aside>
 
 					<section className={classes.passesPage__content}>

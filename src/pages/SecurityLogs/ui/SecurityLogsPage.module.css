@@ -1,6 +1,6 @@
 .page {
-	min-height: calc(100vh - 64px);
-	background: #111115; /* Assuming dark wrapper from Figma, but keeping white panel */
+	min-height: 100vh;
+	background: #fff;
 	color: #1a1a1a;
 	font-family: Inter, Arial, sans-serif;
 	display: flex;
@@ -92,7 +92,7 @@
 .sidebarSubname { margin: 0; font-size: 12px; color: #667085; }
 
 /* MAIN CONTENT */
-.content { background: #fff; }
+.content { background: #fff; display: flex; flex-direction: column; }
 .contentBox { padding: 32px 40px; display: flex; flex-direction: column; gap: 32px; }
 
 /* HEADER */
@@ -148,7 +148,7 @@
 .statLabel { margin: 0; font-size: 14px; font-weight: 500; color: #667085; }
 
 /* TABLE */
-.tableWrap { border: 1px solid #eaecf0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05); }
+.tableWrap { border: 1px solid #eaecf0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05); background: #fff; }
 .table { width: 100%; border-collapse: collapse; text-align: left; }
 .table th { padding: 16px 24px; font-size: 13px; font-weight: 500; color: #667085; border-bottom: 1px solid #eaecf0; background: #f9fafb; white-space: nowrap; }
 .table td { padding: 16px 24px; font-size: 14px; color: #101828; border-bottom: 1px solid #eaecf0; font-weight: 500; }
@@ -170,7 +170,7 @@
 .typeBadgeGreen { color: #16a34a; background: #dcfce7; }
 
 /* PAGINATION */
-.pagination { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 16px 24px; border-top: 1px solid #eaecf0; background: #fff;}
+.pagination { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 16px 24px; background: #fff;}
 .pageBtn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: none; background: transparent; color: #667085; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;}
 .pageBtn:hover { background: #f9fafb; color: #101828; }
 .pageBtnActive { background: #f3e8ff; color: #7700ff; }
