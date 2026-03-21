@@ -53,6 +53,7 @@ const UsersPage = memo(() => {
 		login: "",
 		password: "",
 	});
+	const [createUserError, setCreateUserError] = useState("");
 	const nav = useNavigate();
 	const location = useLocation();
 	const [signOut] = useSignOutMutation();
@@ -96,9 +97,17 @@ const UsersPage = memo(() => {
 
 	const onCreateUser = async () => {
 		if (!newUser.fullName.trim() || !newUser.login.trim() || !newUser.password.trim()) {
+			setCreateUserError("Заполните все поля");
 			return;
 		}
 
+		// Backend обычно ожидает логин без символа '@' (не e-mail), например: ivanov_ia
+		if (newUser.login.includes("@")) {
+			setCreateUserError("Логин должен быть без @ (например: ivanov_ia)");
+			return;
+		}
+
+		setCreateUserError("");
 		try {
 			await createAdminUser({
 				full_name: newUser.fullName.trim(),
@@ -111,8 +120,13 @@ const UsersPage = memo(() => {
 				password: "",
 			});
 			setIsCreateOpen(false);
-		} catch (e) {
-			// Ошибку возвращает backend, оставляем форму открытой для исправления данных.
+		} catch (e: any) {
+			const backendMessage =
+				e?.data?.detail?.[0]?.msg ||
+				e?.data?.detail ||
+				e?.data?.message ||
+				"Ошибка создания пользователя. Проверьте формат логина и пароль.";
+			setCreateUserError(String(backendMessage));
 		}
 	};
 
@@ -333,6 +347,7 @@ const UsersPage = memo(() => {
 								Создать
 							</button>
 						</div>
+						{createUserError ? <p className={classes.usersPage__modalError}>{createUserError}</p> : null}
 					</div>
 				</div>
 			) : null}
