@@ -49,8 +49,7 @@ const SecurityLogsPage = memo(() => {
 	const pageSize = 10;
 
 	const tableData = useMemo(() => {
-		const sortedLogs = [...logs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-		let filtered = sortedLogs
+		let filtered = logs
 			.filter(log => users.some(u => Number(u.id) === Number(log.user_id)))
 			.map((log) => {
 				const user = users.find(u => Number(u.id) === Number(log.user_id));

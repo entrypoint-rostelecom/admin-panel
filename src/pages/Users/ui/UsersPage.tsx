@@ -5,6 +5,7 @@ import {
 	useFreezeAdminUserMutation,
 	useUnfreezeAdminUserMutation,
 	useGetAdminUsersQuery,
+	useGetAccessLogsQuery,
 	useAdminLogoutMutation,
 	useUserActions,
 	getUserData,
@@ -32,6 +33,7 @@ interface UserRow {
 	fullName: string;
 	login: string;
 	status: UserStatus;
+	passesToday: number;
 }
 
 const NAV_ITEMS = [
@@ -42,7 +44,7 @@ const NAV_ITEMS = [
 	{ label: "sidebar.logs", path: getRouteSecurityLogs() },
 ];
 
-const TABLE_HEAD = ["users.table.fullname", "users.table.login", "users.table.status", "users.table.action"];
+const TABLE_HEAD = ["users.table.fullname", "users.table.login", "Приходов сегодня", "users.table.status", "users.table.action"];
 
 const UsersPage = memo(() => {
 	const { t } = useTranslation();
@@ -61,21 +63,30 @@ const UsersPage = memo(() => {
 	const location = useLocation();
 	const [adminLogout] = useAdminLogoutMutation();
 	const { data: usersResponse = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
+	const { data: logsResponse = [] } = useGetAccessLogsQuery();
 	const [createAdminUser, { isLoading: isCreatingUser }] = useCreateAdminUserMutation();
 	const [deleteAdminUser] = useDeleteAdminUserMutation();
 	const [freezeAdminUser] = useFreezeAdminUserMutation();
 	const [unfreezeAdminUser] = useUnfreezeAdminUserMutation();
 	const { clearAuthData } = useUserActions();
-	const users = useMemo<UserRow[]>(
-		() =>
-			usersResponse.map((user) => ({
+	const users = useMemo<UserRow[]>(() => {
+		const todayStr = new Date().toDateString();
+
+		return usersResponse.map((user) => {
+			const userLogs = logsResponse.filter(log => 
+				Number(log.user_id) === Number(user.id) &&
+				new Date(log.timestamp).toDateString() === todayStr
+			);
+
+			return {
 				id: user.id,
 				fullName: user.full_name,
 				login: user.login,
 				status: user.is_active ? "active" : "blocked",
-			})),
-		[usersResponse],
-	);
+				passesToday: userLogs.length,
+			};
+		});
+	}, [usersResponse, logsResponse]);
 
 	const filteredUsers = useMemo(() => {
 		return users.filter((user) => {
@@ -264,6 +275,7 @@ const UsersPage = memo(() => {
 										<tr key={user.id}>
 											<td>{user.fullName}</td>
 											<td className={classes.usersPage__muted}>{user.login}</td>
+											<td className={classes.usersPage__muted} style={{ fontWeight: 600 }}>{user.passesToday > 0 ? `+${user.passesToday}` : "0"}</td>
 											<td>
 												<span
 													className={`${classes.usersPage__status} ${
@@ -309,14 +321,14 @@ const UsersPage = memo(() => {
 									))}
 									{isUsersLoading ? (
 										<tr>
-											<td colSpan={4} className={classes.usersPage__empty}>
+											<td colSpan={5} className={classes.usersPage__empty}>
 												{t("users.table.loading")}
 											</td>
 										</tr>
 									) : null}
 									{filteredUsers.length === 0 ? (
 										<tr>
-											<td colSpan={4} className={classes.usersPage__empty}>
+											<td colSpan={5} className={classes.usersPage__empty}>
 												{t("users.table.empty")}
 											</td>
 										</tr>

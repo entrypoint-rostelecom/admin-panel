@@ -68,8 +68,7 @@ const PassesPage = memo(() => {
 	const [resultFilter, setResultFilter] = useState("Все результаты");
 
 	const tableData = useMemo(() => {
-		const sortedLogs = [...logs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-		return sortedLogs
+		return logs
 			.filter(log => users.some(u => Number(u.id) === Number(log.user_id)))
 			.map((log) => {
 				const user = users.find(u => Number(u.id) === Number(log.user_id));
