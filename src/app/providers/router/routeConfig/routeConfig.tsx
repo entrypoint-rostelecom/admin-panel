@@ -1,4 +1,5 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { DashboardPage as LazyDashboardPage } from "@/pages/Dashboard";
 import { LazyMainPage } from "@/pages/MainPage";
 import { LazyPassesPage } from "@/pages/Passes";
 import { LazySystemSettingsPage } from "@/pages/SystemSettings";
@@ -29,7 +30,7 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	},
 	[AppRoutes.DASHBOARD]: {
 		path: getRouteDashboard(),
-		element: <NotFoundPage />,
+		element: <LazyDashboardPage />,
 		authOnly: true,
 	},
 	[AppRoutes.REQUESTS]: {

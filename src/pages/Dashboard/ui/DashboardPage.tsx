@@ -1,0 +1,295 @@
+import { memo, useState, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Page } from "@/widgets/Page";
+import { 
+	clearAccessToken, 
+	useAdminLogoutMutation, 
+	useUserActions,
+	useGetAdminUsersQuery,
+	useGetAccessLogsQuery 
+} from "@/entities/User";
+import {
+	getRouteDashboard,
+	getRouteDevices,
+	getRouteMain,
+	getRoutePasses,
+	getRouteRequests,
+	getRouteSecurityLogs,
+	getRouteSystemSettings,
+	getRouteUsers,
+} from "@/shared/consts/router";
+import classes from "./DashboardPage.module.css";
+
+const NAV_ITEMS = [
+	{ label: "Дашборд", path: getRouteDashboard() },
+	{ label: "Заявки", path: getRouteRequests() },
+	{ label: "Пользователи", path: getRouteUsers() },
+	{ label: "Проходы", path: getRoutePasses() },
+	{ label: "Устройства", path: getRouteDevices() },
+	{ label: "Настройка системы", path: getRouteSystemSettings() },
+	{ label: "Логи безопасности", path: getRouteSecurityLogs() },
+];
+
+const NEW_REQUESTS: Array<{name: string, login: string, department: string, time: string}> = [];
+
+const DashboardPage = memo(() => {
+	const nav = useNavigate();
+	const location = useLocation();
+	const [isProfileOpen, setIsProfileOpen] = useState(false);
+	const [adminLogout] = useAdminLogoutMutation();
+	const { clearAuthData } = useUserActions();
+
+	const { data: users = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
+
+	const activeUsersCount = users.filter(u => u.is_active && !u.is_deleted).length;
+	const blockedUsersCount = users.filter(u => !u.is_active && !u.is_deleted).length;
+
+	const recentEvents = useMemo(() => {
+		return logs.slice(0, 5).map(log => {
+			const user = users.find(u => u.id === log.user_id);
+			const name = user ? user.full_name : `ID ${log.user_id}`;
+			
+			const date = new Date(log.timestamp);
+			const timeStr = isNaN(date.getTime()) 
+				? log.timestamp 
+				: date.toLocaleString('ru-RU', {
+					day: '2-digit', month: '2-digit', year: 'numeric',
+					hour: '2-digit', minute: '2-digit'
+				}).replace(',', '');
+
+			const rawResult = log.result?.toLowerCase() || "";
+			const isSuccess = rawResult.includes("granted") || rawResult.includes("success") || rawResult.includes("разрешён");
+
+			return {
+				user: name,
+				time: timeStr,
+				location: `Сканер #${log.scanner_id}`,
+				result: isSuccess ? "Разрешён" : "Запрещён",
+				reason: log.reason || "—",
+				status: isSuccess ? "success" : "error"
+			};
+		});
+	}, [logs, users]);
+
+	const onLogout = () => {
+		adminLogout(undefined)
+			.unwrap()
+			.catch(() => undefined)
+			.finally(() => {
+				clearAccessToken();
+				clearAuthData();
+				nav(getRouteMain());
+			});
+	};
+
+	return (
+		<Page>
+			<div className={classes.page}>
+				
+				{/* TOPBAR */}
+				<header className={classes.topbar}>
+					<div className={classes.brand}>
+						<div className={classes.brandLogo}>Р</div>
+						<div className={classes.brandText}>
+							<p className={classes.brandTitle}>Точка входа</p>
+							<p className={classes.brandSubtitle}>Админ-панель</p>
+						</div>
+					</div>
+
+					<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
+						<span className={classes.profileInfo}>
+							<span className={classes.profileName}>Иванова А.С.</span>
+							<span className={classes.profileRole}>Администратор</span>
+						</span>
+						<span className={classes.profileAvatar}>AS</span>
+					</button>
+					
+					{isProfileOpen ? (
+						<div className={classes.profileMenu}>
+							<button type="button" className={classes.profileMenuButton} onClick={onLogout}>
+								Выйти
+							</button>
+						</div>
+					) : null}
+				</header>
+
+				{/* LAYOUT GRID */}
+				<div className={classes.layout}>
+					
+					{/* SIDEBAR */}
+					<aside className={classes.sidebar}>
+						<nav className={classes.nav}>
+							{NAV_ITEMS.map((item) => {
+								const isActive = location.pathname === item.path;
+								return (
+									<button
+										key={item.label}
+										type="button"
+										onClick={() => nav(item.path)}
+										className={`${classes.navItem} ${isActive ? classes["navItem--active"] : ""}`}
+									>
+										<span className={classes.navIcon} />
+										<span>{item.label}</span>
+									</button>
+								);
+							})}
+						</nav>
+
+						<div className={classes.sidebarFooter}>
+							<div className={classes.sidebarMark}>Р</div>
+							<div>
+								<p className={classes.sidebarName}>Ростелеком</p>
+								<p className={classes.sidebarSubname}>Точка входа</p>
+							</div>
+						</div>
+					</aside>
+
+					{/* MAIN CONTENT */}
+					<section className={classes.content}>
+						<div className={classes.contentHeader}>
+							<div>
+								<h1 className={classes.title}>Дашборд</h1>
+								<p className={classes.subtitle}>Обзор системы управления доступом</p>
+							</div>
+						</div>
+
+						{/* 3 KPI CARDS */}
+						<div className={classes.kpiGrid}>
+							<div className={classes.kpiCard}>
+								<div className={classes.kpiCardHeader}>
+									<div className={classes.iconWrapperPurple}>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+									</div>
+									<span className={classes.badgeGreen}>+12%</span>
+								</div>
+								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : activeUsersCount}</h2>
+								<p className={classes.kpiDesc}>Активных пользователей<br/>за период</p>
+							</div>
+							
+							<div className={classes.kpiCard}>
+								<div className={classes.kpiCardHeader}>
+									<div className={classes.iconWrapperRed}>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+									</div>
+									<span className={classes.badgeRed}>-3%</span>
+								</div>
+								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : blockedUsersCount}</h2>
+								<p className={classes.kpiDesc}>Заблокировано<br/>за период</p>
+							</div>
+
+							<div className={classes.kpiCard}>
+								<div className={classes.kpiCardHeader}>
+									<div className={classes.iconWrapperOrange}>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+									</div>
+								</div>
+								<h2 className={classes.kpiNumber}>{NEW_REQUESTS.length}</h2>
+								<p className={classes.kpiDesc}>Новых заявок сегодня</p>
+							</div>
+						</div>
+
+						{/* BOTTOM GRID */}
+						<div className={classes.bottomGrid}>
+							<div className={classes.tablePanel}>
+								<div className={classes.panelHeader}>
+									<div>
+										<h3 className={classes.panelTitle}>Последние события прохода</h3>
+										<p className={classes.panelSubtitle}>Журнал активности сканеров</p>
+									</div>
+								</div>
+								<div className={classes.tableWrap}>
+									<table className={classes.table}>
+										<thead>
+											<tr>
+												<th>Пользователь</th>
+												<th>Время</th>
+												<th>Локация</th>
+												<th>Результат</th>
+												<th>Причина</th>
+											</tr>
+										</thead>
+										<tbody>
+											{isLogsLoading ? (
+												<tr>
+													<td colSpan={5} className={classes.tableMuted} style={{textAlign: "center"}}>Обновление журнала...</td>
+												</tr>
+											) : recentEvents.length > 0 ? (
+												recentEvents.map((event, idx) => (
+													<tr key={idx}>
+														<td>{event.user}</td>
+														<td className={classes.tableMuted}>{event.time}</td>
+														<td className={classes.tableMuted}>{event.location}</td>
+														<td>
+															<span className={`${classes.resultBadge} ${event.status === "success" ? classes["resultBadge--success"] : classes["resultBadge--error"]}`}>
+																<span className={classes.statusDot} />
+																{event.result}
+															</span>
+														</td>
+														<td className={classes.tableMuted}>{event.reason}</td>
+													</tr>
+												))
+											) : (
+												<tr>
+													<td colSpan={5} className={classes.tableMuted} style={{textAlign: "center"}}>Нет недавних событий</td>
+												</tr>
+											)}
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div className={classes.tablePanel}>
+								<div className={classes.panelHeaderRaw}>
+									<div>
+										<h3 className={classes.panelTitle}>Новые заявки</h3>
+										<p className={classes.panelSubtitle}>Требуют рассмотрения</p>
+									</div>
+									<button className={classes.allRequestsButton}>Все заявки</button>
+								</div>
+								<div className={classes.tableWrap}>
+									<table className={classes.table}>
+										<thead>
+											<tr>
+												<th>ФИО</th>
+												<th>Логин</th>
+												<th>Подразделение</th>
+												<th>Время подачи</th>
+												<th>Действия</th>
+											</tr>
+										</thead>
+										<tbody>
+											{NEW_REQUESTS.length > 0 ? (
+												NEW_REQUESTS.map((req, idx) => (
+													<tr key={idx}>
+														<td>{req.name}</td>
+														<td className={classes.tableMuted}>{req.login}</td>
+														<td className={classes.tableMuted}>{req.department}</td>
+														<td className={classes.tableMuted}>{req.time}</td>
+														<td>
+															<div className={classes.actionButtons}>
+																<button className={classes.approveButton}>Одобрить</button>
+																<button className={classes.rejectButton}>Отклонить</button>
+															</div>
+														</td>
+													</tr>
+												))
+											) : (
+												<tr>
+													<td colSpan={5} className={classes.tableMuted} style={{textAlign: "center"}}>Нет новых заявок</td>
+												</tr>
+											)}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+					</section>
+				</div>
+			</div>
+		</Page>
+	);
+});
+
+export default DashboardPage;

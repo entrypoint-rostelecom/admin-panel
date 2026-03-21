@@ -1,0 +1,123 @@
+.page {
+	min-height: calc(100vh - 64px);
+	background: #fafafa;
+	color: #1a1a1a;
+	font-family: Inter, Arial, sans-serif;
+}
+
+/* TOPBAR */
+.topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	height: 64px;
+	padding: 0 24px;
+	background: #7700ff;
+	box-shadow: 0 2px 4px -2px rgb(0 0 0 / 10%), 0 4px 6px -1px rgb(0 0 0 / 10%);
+}
+
+.brand { display: flex; align-items: center; gap: 12px; }
+.brandLogo {
+	width: 40px; height: 40px;
+	display: flex; align-items: center; justify-content: center;
+	background: #fff; border-radius: 16px;
+	color: #7700ff; font-size: 20px; font-weight: 700; line-height: 1;
+}
+.brandText { display: flex; flex-direction: column; gap: 2px; }
+.brandTitle { margin: 0; color: #fff; font-size: 18px; font-weight: 700; line-height: 1; }
+.brandSubtitle { margin: 0; color: rgb(255 255 255 / 80%); font-size: 12px; line-height: 1.3; }
+
+.profile {
+	display: flex; align-items: center; gap: 12px;
+	height: 56px; padding: 0 12px;
+	border: 0; border-radius: 16px; background: transparent;
+	color: #fff; cursor: pointer;
+}
+.profileInfo { display: flex; flex-direction: column; align-items: flex-end; }
+.profileName { font-size: 14px; font-weight: 500; line-height: 1.4; }
+.profileRole { font-size: 12px; color: rgb(255 255 255 / 70%); }
+.profileAvatar {
+	width: 40px; height: 40px; border-radius: 999px;
+	display: flex; align-items: center; justify-content: center;
+	background: rgb(255 255 255 / 20%); font-size: 12px; font-weight: 600;
+}
+.profileMenu {
+	position: absolute; right: 24px; top: 60px; z-index: 6;
+	background: #fff; border: 1px solid rgb(0 0 0 / 10%);
+	border-radius: 12px; box-shadow: 0 10px 20px rgb(0 0 0 / 10%);
+}
+.profileMenuButton { border: 0; background: transparent; padding: 10px 16px; cursor: pointer; font-size: 14px; }
+
+/* LAYOUT */
+.layout { display: grid; grid-template-columns: 256px 1fr; }
+
+/* SIDEBAR */
+.sidebar {
+	display: flex; flex-direction: column; justify-content: space-between;
+	border-right: 1px solid rgb(0 0 0 / 10%); background: #fff; min-height: calc(100vh - 64px);
+}
+.nav { display: flex; flex-direction: column; gap: 4px; padding: 16px; }
+.navItem {
+	height: 48px; display: flex; align-items: center; gap: 12px;
+	padding: 0 0 0 16px; background: transparent; border: 0; border-radius: 16px;
+	color: rgb(26 26 26 / 70%); text-align: left; font-size: 16px; line-height: 1.5; cursor: pointer;
+}
+.navItem:hover { background: rgb(0 0 0 / 2%); }
+.navItem--active { background: rgb(119 0 255 / 5%); color: #7700ff; font-weight: 500; }
+.navIcon { width: 20px; height: 20px; border-radius: 6px; background: currentcolor; opacity: 0.25; }
+
+.sidebarFooter {
+	display: flex; flex-direction: column; align-items: center; justify-content: center;
+	gap: 6px; padding: 17px 16px; border-top: 1px solid rgb(0 0 0 / 10%); text-align: center;
+}
+.sidebarMark {
+	width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+	border-radius: 4px; background: #7700ff; color: #fff; font-size: 12px; font-weight: 700;
+}
+.sidebarName { margin: 0; font-size: 12px; font-weight: 500; line-height: 1.33; }
+.sidebarSubname { margin: 0; font-size: 12px; line-height: 1.33; color: #717182; }
+
+/* MAIN CONTENT */
+.content { padding: 32px 32px 32px; display: flex; flex-direction: column; gap: 24px; }
+.contentHeader { display: flex; justify-content: space-between; align-items: center; }
+.title { margin: 0; font-size: 30px; font-weight: 700; line-height: 1.2; }
+.subtitle { margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: #717182; }
+
+/* KPI GRID */
+.kpiGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.kpiCard {
+	background: #fff; border-radius: 16px; padding: 24px;
+	border: 1px solid rgb(0 0 0 / 8%);
+	display: flex; flex-direction: column; gap: 16px;
+}
+.kpiCardHeader { display: flex; justify-content: space-between; align-items: flex-start; }
+.iconWrapperPurple { width: 44px; height: 44px; background: #f3e8ff; color: #9333ea; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.iconWrapperRed { width: 44px; height: 44px; background: #fee2e2; color: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.iconWrapperOrange { width: 44px; height: 44px; background: #ffedd5; color: #f97316; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+
+.badgeGreen { font-size: 12px; font-weight: 600; color: #16a34a; background: #dcfce7; padding: 4px 8px; border-radius: 12px; }
+.badgeRed { font-size: 12px; font-weight: 600; color: #ef4444; background: #fee2e2; padding: 4px 8px; border-radius: 12px; }
+
+.kpiNumber { margin: 0; font-size: 32px; font-weight: 700; line-height: 1.2; }
+.kpiDesc { margin: 0; font-size: 14px; color: #717182; line-height: 1.4; }
+
+/* BOTTOM GRID */
+.bottomGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.tablePanel { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid rgb(0 0 0 / 8%); display: flex; flex-direction: column; gap: 20px; }
+.allRequestsButton { padding: 8px 16px; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; font-size: 14px; font-weight: 500; cursor: pointer; color: #374151; }
+
+.tableWrap { overflow-x: auto; margin: -12px -24px -24px; padding: 12px 24px 24px; }
+.table { width: 100%; border-collapse: collapse; min-width: 500px; }
+.table th { text-align: left; padding: 12px 16px; font-size: 13px; font-weight: 500; color: #6b7280; border-bottom: 1px solid #e5e7eb; }
+.table td { padding: 16px; font-size: 14px; font-weight: 500; border-bottom: 1px solid #e5e7eb; }
+.table tbody tr:last-child td { border-bottom: none; }
+.tableMuted { color: #6b7280; font-weight: 400; }
+
+.resultBadge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; border: 1px solid transparent; }
+.resultBadge--success { color: #16a34a; background: #dcfce7; border-color: #bbf7d0; }
+.resultBadge--error { color: #dc2626; background: #fee2e2; border-color: #fecaca; }
+
+.actionButtons { display: flex; gap: 8px; }
+.approveButton { padding: 6px 12px; border-radius: 8px; border: 0; background: #22c55e; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; }
+.rejectButton { padding: 6px 12px; border-radius: 8px; border: 1px solid #fecaca; background: #fff; color: #ef4444; font-size: 13px; font-weight: 500; cursor: pointer; }
