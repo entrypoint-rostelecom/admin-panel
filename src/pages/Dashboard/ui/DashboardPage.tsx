@@ -1,12 +1,12 @@
 import { memo, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Page } from "@/widgets/Page";
-import { 
-	clearAccessToken, 
-	useAdminLogoutMutation, 
+import {
+	clearAccessToken,
+	useAdminLogoutMutation,
 	useUserActions,
 	useGetAdminUsersQuery,
-	useGetAccessLogsQuery 
+	useGetAccessLogsQuery
 } from "@/entities/User";
 import {
 	getRouteDashboard,
@@ -37,31 +37,35 @@ const DashboardPage = memo(() => {
 	const [adminLogout] = useAdminLogoutMutation();
 	const { clearAuthData } = useUserActions();
 
-	const { data: users = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
-	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
+	const { data: users = [], isLoading: isUsersLoading } = useGetAdminUsersQuery(undefined, { pollingInterval: 3000 });
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery(undefined, { pollingInterval: 3000 });
 
 	const activeLastMonthCount = useMemo(() => {
 		const monthAgo = new Date();
 		monthAgo.setMonth(monthAgo.getMonth() - 1);
-		return users.filter(u => u.is_active && !u.is_deleted && new Date(u.created_at) >= monthAgo).length;
+		return users.filter(u => u.is_active && new Date(u.created_at) >= monthAgo).length;
 	}, [users]);
 
 	const totalBlockedCount = useMemo(() => {
-		return users.filter(u => !u.is_active && !u.is_deleted).length;
+		return users.filter(u => !u.is_active).length;
 	}, [users]);
 
 	const insideCount = useMemo(() => {
-		return users.filter(u => u.is_inside && !u.is_deleted).length;
+		return users.filter(u => u.is_inside).length;
 	}, [users]);
 
 	const recentEvents = useMemo(() => {
-		return logs.slice(0, 5).map(log => {
-			const user = users.find(u => u.id === log.user_id);
-			const name = user ? user.full_name : `ID ${log.user_id}`;
-			
+		const sortedLogs = [...logs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+		return sortedLogs
+			.filter(log => users.some(u => Number(u.id) === Number(log.user_id)))
+			.slice(0, 5)
+			.map(log => {
+				const user = users.find(u => Number(u.id) === Number(log.user_id));
+				const name = user ? user.full_name : `ID ${log.user_id}`;
+
 			const date = new Date(log.timestamp);
-			const timeStr = isNaN(date.getTime()) 
-				? log.timestamp 
+			const timeStr = isNaN(date.getTime())
+				? log.timestamp
 				: date.toLocaleString('ru-RU', {
 					day: '2-digit', month: '2-digit', year: 'numeric',
 					hour: '2-digit', minute: '2-digit'
@@ -95,7 +99,7 @@ const DashboardPage = memo(() => {
 	return (
 		<Page>
 			<div className={classes.page}>
-				
+
 				{/* TOPBAR */}
 				<header className={classes.topbar}>
 					<div className={classes.brand}>
@@ -113,7 +117,7 @@ const DashboardPage = memo(() => {
 						</span>
 						<span className={classes.profileAvatar}>AS</span>
 					</button>
-					
+
 					{isProfileOpen ? (
 						<div className={classes.profileMenu}>
 							<button type="button" className={classes.profileMenuButton} onClick={onLogout}>
@@ -125,7 +129,7 @@ const DashboardPage = memo(() => {
 
 				{/* LAYOUT GRID */}
 				<div className={classes.layout}>
-					
+
 					{/* SIDEBAR */}
 					<aside className={classes.sidebar}>
 						<nav className={classes.nav}>
@@ -139,11 +143,11 @@ const DashboardPage = memo(() => {
 										className={`${classes.navItem} ${isActive ? classes["navItem--active"] : ""}`}
 									>
 										<span className={classes.navIcon}>
-											{item.label === "Дашборд" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>}
-											{item.label === "Пользователи" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
-											{item.label === "Проходы" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
-											{item.label === "Устройства" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>}
-											{item.label === "Логи безопасности" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>}
+											{item.label === "Дашборд" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1" /><rect x="14" y="3" width="7" height="5" rx="1" /><rect x="14" y="12" width="7" height="9" rx="1" /><rect x="3" y="16" width="7" height="5" rx="1" /></svg>}
+											{item.label === "Пользователи" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>}
+											{item.label === "Проходы" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
+											{item.label === "Устройства" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>}
+											{item.label === "Логи безопасности" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><polyline points="9 12 11 14 15 10" /></svg>}
 										</span>
 										<span>{item.label}</span>
 									</button>
@@ -167,18 +171,17 @@ const DashboardPage = memo(() => {
 							<div className={classes.kpiCard}>
 								<div className={classes.kpiCardHeader}>
 									<div className={classes.iconWrapperPurple}>
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /><polyline points="17 11 19 13 23 9" /></svg>
 									</div>
-									<span className={classes.badgeGreen}>+12%</span>
 								</div>
 								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : activeLastMonthCount}</h2>
-								<p className={classes.kpiDesc}>Активных за месяц</p>
+								<p className={classes.kpiDesc}>Активные пользователи за месяц</p>
 							</div>
-							
+
 							<div className={classes.kpiCard}>
 								<div className={classes.kpiCardHeader}>
 									<div className={classes.iconWrapperRed}>
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /><line x1="23" y1="11" x2="17" y2="11" /></svg>
 									</div>
 								</div>
 								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : totalBlockedCount}</h2>
@@ -188,11 +191,11 @@ const DashboardPage = memo(() => {
 							<div className={classes.kpiCard}>
 								<div className={classes.kpiCardHeader}>
 									<div className={classes.iconWrapperOrange}>
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
 									</div>
 								</div>
 								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : insideCount}</h2>
-								<p className={classes.kpiDesc}>Сотрудников внутри</p>
+								<p className={classes.kpiDesc}>Внутри работы</p>
 							</div>
 						</div>
 
@@ -219,7 +222,7 @@ const DashboardPage = memo(() => {
 										<tbody>
 											{isLogsLoading ? (
 												<tr>
-													<td colSpan={5} className={classes.tableMuted} style={{textAlign: "center"}}>Обновление журнала...</td>
+													<td colSpan={5} className={classes.tableMuted} style={{ textAlign: "center" }}>Обновление журнала...</td>
 												</tr>
 											) : recentEvents.length > 0 ? (
 												recentEvents.map((event, idx) => (
@@ -238,7 +241,7 @@ const DashboardPage = memo(() => {
 												))
 											) : (
 												<tr>
-													<td colSpan={5} className={classes.tableMuted} style={{textAlign: "center"}}>Нет недавних событий</td>
+													<td colSpan={5} className={classes.tableMuted} style={{ textAlign: "center" }}>Нет недавних событий</td>
 												</tr>
 											)}
 										</tbody>

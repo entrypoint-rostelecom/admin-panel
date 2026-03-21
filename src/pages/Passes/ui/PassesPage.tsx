@@ -61,16 +61,19 @@ const PassesPage = memo(() => {
 			});
 	};
 
-	const { data: users = [] } = useGetAdminUsersQuery();
-	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
+	const { data: users = [] } = useGetAdminUsersQuery(undefined, { pollingInterval: 3000 });
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery(undefined, { pollingInterval: 3000 });
 
 	const [scannerFilter, setScannerFilter] = useState("Все сканеры");
 	const [resultFilter, setResultFilter] = useState("Все результаты");
 
 	const tableData = useMemo(() => {
-		return logs.map((log) => {
-			const user = users.find(u => u.id === log.user_id);
-			const userName = user ? user.full_name : `ID ${log.user_id}`;
+		const sortedLogs = [...logs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+		return sortedLogs
+			.filter(log => users.some(u => Number(u.id) === Number(log.user_id)))
+			.map((log) => {
+				const user = users.find(u => Number(u.id) === Number(log.user_id));
+				const userName = user ? user.full_name : `ID ${log.user_id}`;
 			const login = user ? user.login : "-";
 			
 			const date = new Date(log.timestamp);

@@ -36,8 +36,8 @@ const SecurityLogsPage = memo(() => {
 	const [adminLogout] = useAdminLogoutMutation();
 	const { clearAuthData } = useUserActions();
 
-	const { data: users = [] } = useGetAdminUsersQuery();
-	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
+	const { data: users = [] } = useGetAdminUsersQuery(undefined, { pollingInterval: 3000 });
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery(undefined, { pollingInterval: 3000 });
 
 	const [search, setSearch] = useState("");
 	const [dateFilter, setDateFilter] = useState("");
@@ -48,9 +48,12 @@ const SecurityLogsPage = memo(() => {
 	const pageSize = 10;
 
 	const tableData = useMemo(() => {
-		let filtered = logs.map((log) => {
-			const user = users.find(u => u.id === log.user_id);
-			const adminName = user ? user.full_name : `ID ${log.user_id}`;
+		const sortedLogs = [...logs].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+		let filtered = sortedLogs
+			.filter(log => users.some(u => Number(u.id) === Number(log.user_id)))
+			.map((log) => {
+				const user = users.find(u => Number(u.id) === Number(log.user_id));
+				const adminName = user ? user.full_name : `ID ${log.user_id}`;
 			
 			const date = new Date(log.timestamp);
 			const timeStr = isNaN(date.getTime()) 
