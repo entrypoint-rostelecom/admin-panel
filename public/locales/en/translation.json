@@ -31,10 +31,6 @@
 			"submit": "Sign In",
 			"loading": "Signing in..."
 		},
-		"footer": {
-			"text": "Don't have an account?",
-			"link": "Sign Up"
-		},
 		"error": {
 			"empty": "Please fill in username and password",
 			"invalid": "Invalid username or password"

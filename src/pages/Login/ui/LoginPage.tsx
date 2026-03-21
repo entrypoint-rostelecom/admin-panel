@@ -39,10 +39,10 @@ const LoginPage = () => {
 		<div className={classes.root}>
 			<div className={classes.card}>
 				<div className={classes.logoContainer}>
-					<img 
-						src="/assets/Image/RGB_RT_logo-horizontal_main_ru.png" 
-						alt={t("common.brand")} 
-						className={classes.logo} 
+					<img
+						src="/assets/Image/RGB_RT_logo-horizontal_main_ru.png"
+						alt={t("common.brand")}
+						className={classes.logo}
 					/>
 				</div>
 
@@ -82,13 +82,6 @@ const LoginPage = () => {
 
 					{error ? <p className={classes.error}>{error}</p> : null}
 				</form>
-
-				<div className={classes.footer}>
-					{t("login.footer.text")}{" "}
-					<Link to={getRouteRegister()} className={classes.link}>
-						{t("login.footer.link")}
-					</Link>
-				</div>
 			</div>
 		</div>
 	);
