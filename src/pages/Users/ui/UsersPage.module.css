@@ -475,16 +475,46 @@
 	border-color: rgb(244 67 54 / 20%);
 }
 
+.usersPage__actions {
+	display: flex;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+.usersPage__freezeButton {
+	height: 30px;
+	padding: 0 10px;
+	border-radius: 10px;
+	border: 1px solid #d0d5dd;
+	background: #f9fafb;
+	color: #344054;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.usersPage__freezeButton:hover {
+	background: #f2f4f7;
+	border-color: #667085;
+}
+
 .usersPage__deleteButton {
 	height: 30px;
 	padding: 0 10px;
 	border-radius: 10px;
-	border: 1px solid rgb(244 67 54 / 25%);
-	background: rgb(244 67 54 / 8%);
-	color: #c62828;
+	border: 1px solid #fee4e2;
+	background: #fef3f2;
+	color: #d92d20;
 	font-size: 12px;
 	font-weight: 500;
 	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.usersPage__deleteButton:hover {
+	background: #fee4e2;
+	color: #b42318;
 }
 
 .usersPage__modalBackdrop {

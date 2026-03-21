@@ -3,20 +3,6 @@ import { SignInDto } from "../model/types/dto/SignInDto";
 import { User } from "../model/types/User";
 import { UserRoles } from "../model/consts/UserRoles";
 
-interface AuthLoginResponse {
-	success: boolean;
-	user: {
-		id: number;
-		login: string;
-		full_name: string;
-		is_active: boolean;
-		is_deleted: boolean;
-		is_inside: boolean;
-		created_at: string;
-	};
-	accessToken: string;
-}
-
 interface AdminLoginResponse {
 	success: boolean;
 	admin: {
@@ -35,6 +21,16 @@ export interface AdminUser {
 	created_at: string;
 }
 
+export interface AccessLog {
+	id: number;
+	user_id: number;
+	timestamp: string;
+	signature_base64: string;
+	result: string;
+	reason: string;
+	scanner_id: number;
+}
+
 interface CreateAdminUserDto {
 	login: string;
 	password: string;
@@ -44,29 +40,7 @@ interface CreateAdminUserDto {
 const userApi = rtkApi.injectEndpoints({
 	endpoints: (build) => ({
 		getMe: build.query<User, undefined>({
-			query: () => "/user",
-		}),
-
-		register: build.mutation<User & { accessToken: string }, SignInDto>({
-			query: (authData) => ({
-				url: "/user/register",
-				body: authData,
-				method: "POST",
-			}),
-		}),
-
-		signIn: build.mutation<User & { accessToken: string }, SignInDto>({
-			query: (authData) => ({
-				url: "/api/v1/auth/login",
-				body: authData,
-				method: "POST",
-			}),
-			transformResponse: (response: AuthLoginResponse): User & { accessToken: string } => ({
-				id: String(response.user.id),
-				username: response.user.login,
-				roles: [UserRoles.USER],
-				accessToken: response.accessToken,
-			}),
+			query: () => "/api/v1/admin/users/me", // Assuming there is a me endpoint, but documentation didn't explicitly show it. Usually it exists.
 		}),
 
 		adminSignIn: build.mutation<User & { accessToken: string }, SignInDto>({
@@ -105,9 +79,22 @@ const userApi = rtkApi.injectEndpoints({
 			invalidatesTags: ["AdminUsers"],
 		}),
 
-		signOut: build.mutation({
+		freezeAdminUser: build.mutation<AdminUser, number>({
+			query: (userId) => ({
+				url: `/api/v1/admin/users/${userId}/freeze`,
+				method: "PATCH",
+			}),
+			invalidatesTags: ["AdminUsers"],
+		}),
+
+		getAccessLogs: build.query<AccessLog[], void>({
+			query: () => "/api/v1/admin/logs",
+			providesTags: ["AccessLogs"],
+		}),
+
+		signOut: build.mutation<void, void>({
 			query: () => ({
-				url: "/user/signOut",
+				url: "/api/v1/user/logout",
 				method: "POST",
 			}),
 		}),
@@ -115,12 +102,12 @@ const userApi = rtkApi.injectEndpoints({
 });
 
 export const {
-	useRegisterMutation,
-	useSignInMutation,
 	useAdminSignInMutation,
 	useGetAdminUsersQuery,
 	useCreateAdminUserMutation,
 	useDeleteAdminUserMutation,
+	useFreezeAdminUserMutation,
+	useGetAccessLogsQuery,
 	useSignOutMutation,
 	useGetMeQuery,
 } = userApi;

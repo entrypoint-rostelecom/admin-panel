@@ -2,6 +2,7 @@ import {
 	clearAccessToken,
 	useCreateAdminUserMutation,
 	useDeleteAdminUserMutation,
+	useFreezeAdminUserMutation,
 	useGetAdminUsersQuery,
 	useSignOutMutation,
 	useUserActions,
@@ -60,6 +61,7 @@ const UsersPage = memo(() => {
 	const { data: usersResponse = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
 	const [createAdminUser, { isLoading: isCreatingUser }] = useCreateAdminUserMutation();
 	const [deleteAdminUser] = useDeleteAdminUserMutation();
+	const [freezeAdminUser] = useFreezeAdminUserMutation();
 	const { clearAuthData } = useUserActions();
 	const users = useMemo<UserRow[]>(
 		() =>
@@ -101,7 +103,6 @@ const UsersPage = memo(() => {
 			return;
 		}
 
-		// Backend обычно ожидает логин без символа '@' (не e-mail), например: ivanov_ia
 		if (newUser.login.includes("@")) {
 			setCreateUserError("Логин должен быть без @ (например: ivanov_ia)");
 			return;
@@ -133,6 +134,14 @@ const UsersPage = memo(() => {
 	const onDeleteUser = async (userId: number) => {
 		try {
 			await deleteAdminUser(userId).unwrap();
+		} catch (e) {
+			// NOP
+		}
+	};
+
+	const onFreezeUser = async (userId: number) => {
+		try {
+			await freezeAdminUser(userId).unwrap();
 		} catch (e) {
 			// NOP
 		}
@@ -286,13 +295,24 @@ const UsersPage = memo(() => {
 												</span>
 											</td>
 											<td>
-												<button
-													type="button"
-													className={classes.usersPage__deleteButton}
-													onClick={() => onDeleteUser(user.id)}
-												>
-													Удалить
-												</button>
+												<div className={classes.usersPage__actions}>
+													{user.status === "active" ? (
+														<button
+															type="button"
+															className={classes.usersPage__freezeButton}
+															onClick={() => onFreezeUser(user.id)}
+														>
+															Заморозить
+														</button>
+													) : null}
+													<button
+														type="button"
+														className={classes.usersPage__deleteButton}
+														onClick={() => onDeleteUser(user.id)}
+													>
+														Удалить
+													</button>
+												</div>
 											</td>
 										</tr>
 									))}

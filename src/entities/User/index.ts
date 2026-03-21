@@ -1,10 +1,10 @@
 export {
-	useRegisterMutation,
-	useSignInMutation,
 	useAdminSignInMutation,
 	useGetAdminUsersQuery,
 	useCreateAdminUserMutation,
 	useDeleteAdminUserMutation,
+	useFreezeAdminUserMutation,
+	useGetAccessLogsQuery,
 	useSignOutMutation,
 } from "./api/userApi";
 export type { SignInDto } from "./model/types/dto/SignInDto";
