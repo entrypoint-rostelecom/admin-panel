@@ -100,5 +100,72 @@
 				"server": "Error creating user. Check username format and password."
 			}
 		}
+	},
+	"dashboard": {
+		"title": "Dashboard",
+		"subtitle": "Access Control System Overview",
+		"kpi": {
+			"users": "Active Users This Month",
+			"blocked": "Total Blocked",
+			"inside": "Arrivals Today"
+		},
+		"logs": {
+			"title": "Recent Access Events",
+			"subtitle": "Scanner Activity Log",
+			"user": "User",
+			"time": "Time",
+			"location": "Location",
+			"result": "Result",
+			"reason": "Reason"
+		}
+	},
+	"passes": {
+		"title": "Passes",
+		"subtitle": "All Access Event Log",
+		"export": "Export CSV",
+		"search": "Search by user...",
+		"filter": {
+			"all": "All Results",
+			"allowed": "Allowed",
+			"denied": "Denied"
+		},
+		"table": {
+			"time": "Event Time",
+			"user": "User",
+			"login": "Login",
+			"scanner": "Scanner",
+			"result": "Result",
+			"reason": "Denial Reason",
+			"device": "Device",
+			"empty": "No passes match selected filters"
+		}
+	},
+	"logs": {
+		"title": "Security Logs",
+		"subtitle": "System Events and Administrator Actions",
+		"export": "Export Report",
+		"search": "Search by admin or action...",
+		"filter": {
+			"allTypes": "All Types",
+			"auth": "Authorization",
+			"denied": "Access Denied",
+			"allAdmins": "All Admins"
+		},
+		"stats": {
+			"total": "Total Events",
+			"allowed": "Allowed",
+			"denied": "Denied",
+			"scanners": "Total Scanners"
+		},
+		"table": {
+			"time": "Time",
+			"admin": "Administrator",
+			"action": "Action",
+			"type": "Type",
+			"details": "Details",
+			"scanner": "Scanner Number",
+			"empty": "No events found",
+			"loading": "Loading logs..."
+		}
 	}
 }

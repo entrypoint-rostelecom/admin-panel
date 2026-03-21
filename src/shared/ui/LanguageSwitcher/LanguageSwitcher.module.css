@@ -1,19 +1,27 @@
 .switcher {
-    background: transparent;
-    border: 1px solid var(--rostelecom-orange);
-    color: var(--rostelecom-orange);
-    border-radius: 4px;
-    padding: 6px 12px;
-    font-size: 14px;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #fff;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     cursor: pointer;
     transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
+    backdrop-filter: blur(4px);
 }
 
 .switcher:hover {
-    background: var(--rostelecom-orange);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.7);
+    transform: scale(1.03);
+}
+
+.switcher:active {
+    transform: scale(0.97);
 }

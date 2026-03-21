@@ -24,42 +24,42 @@ import { LazyUsersPage } from "@/pages/Users";
 
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	[AppRoutes.MAIN]: {
-		path: getRouteMain(),
+		path: "/:lang/",
 		element: <LazyMainPage />,
 		authOnly: true,
 	},
 	[AppRoutes.DASHBOARD]: {
-		path: getRouteDashboard(),
+		path: "/:lang/dashboard",
 		element: <LazyDashboardPage />,
 		authOnly: true,
 	},
 	[AppRoutes.REQUESTS]: {
-		path: getRouteRequests(),
+		path: "/:lang/requests",
 		element: <NotFoundPage />,
 		authOnly: true,
 	},
 	[AppRoutes.USERS]: {
-		path: getRouteUsers(),
+		path: "/:lang/users",
 		element: <LazyUsersPage />,
 		authOnly: true,
 	},
 	[AppRoutes.PASSES]: {
-		path: getRoutePasses(),
+		path: "/:lang/passes",
 		element: <LazyPassesPage />,
 		authOnly: true,
 	},
 	[AppRoutes.DEVICES]: {
-		path: getRouteDevices(),
+		path: "/:lang/devices",
 		element: <NotFoundPage />,
 		authOnly: true,
 	},
 	[AppRoutes.SYSTEM_SETTINGS]: {
-		path: getRouteSystemSettings(),
+		path: "/:lang/system-settings",
 		element: <NotFoundPage />,
 		authOnly: true,
 	},
 	[AppRoutes.SECURITY_LOGS]: {
-		path: getRouteSecurityLogs(),
+		path: "/:lang/security-logs",
 		element: <LazySecurityLogsPage />,
 		authOnly: true,
 	},
@@ -68,11 +68,11 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 		element: <NotFoundPage />,
 	},
 	[AppRoutes.LOGIN]: {
-		path: getRouteLogin(),
+		path: "/:lang/login",
 		element: <LazyLoginPage />,
 	},
 	[AppRoutes.REGISTER]: {
-		path: getRouteRegister(),
+		path: "/:lang/register",
 		element: <LazyRegisterPage />,
 	},
 };
