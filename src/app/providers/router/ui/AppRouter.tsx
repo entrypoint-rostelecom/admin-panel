@@ -1,9 +1,10 @@
-import { Suspense, memo, useCallback } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Suspense, memo, useCallback, useEffect } from "react";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import { routeConfig } from "../routeConfig/routeConfig";
 import { PageLoader } from "@/widgets/PageLoader";
 import { RequireAuth } from "./RequireAuth";
 import { AppRouteProps } from "@/shared/types/router";
+import { getRouteMain } from "@/shared/consts/router";
 
 export const AppRouter = memo(() => {
 	const renderWithWrapper = useCallback((route: AppRouteProps) => {
@@ -20,7 +21,10 @@ export const AppRouter = memo(() => {
 
 	return (
 		<Suspense fallback={<PageLoader />}>
-			<Routes>{Object.values(routeConfig).map(renderWithWrapper)}</Routes>
+			<Routes>
+				<Route path="/" element={<Navigate to={getRouteMain()} replace />} />
+				{Object.values(routeConfig).map(renderWithWrapper)}
+			</Routes>
 		</Suspense>
 	);
 });

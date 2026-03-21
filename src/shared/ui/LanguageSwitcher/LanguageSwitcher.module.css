@@ -1,0 +1,19 @@
+.switcher {
+    background: transparent;
+    border: 1px solid var(--rostelecom-orange);
+    color: var(--rostelecom-orange);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.switcher:hover {
+    background: var(--rostelecom-orange);
+    color: #fff;
+}

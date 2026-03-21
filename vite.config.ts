@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
 			// В деве используем пустую строку, чтобы работал прокси, в билде — полный URL
 			__API__: JSON.stringify(isDev ? "" : env.VITE_API_URL),
 			__API_LOGGING__: JSON.stringify(env.VITE_API_LOGGING === "true"),
+			__SESSION_DURATION_HOURS__: JSON.stringify(Number(env.VITE_SESSION_DURATION_HOURS) || 4),
 		},
 		resolve: {
 			alias: [{ find: "@", replacement: "/src" }],

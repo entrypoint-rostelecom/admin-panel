@@ -1,30 +1,28 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { AppRouter } from "./providers/router";
 import { PageLoader } from "@/widgets/PageLoader";
 import { GlobalStyles } from "./styles/globalStyles";
-import { useGetMeQuery } from "@/entities/User/api/userApi";
-import { UserActions, getAccessToken } from "@/entities/User";
+import { UserActions, getAccessToken, getUserData } from "@/entities/User";
 import { useAppDispatch } from "@/shared/lib/hooks";
 
 const App = () => {
 	const dispatch = useAppDispatch();
-	const hasToken = Boolean(getAccessToken());
-	const { data: user, isLoading } = useGetMeQuery(undefined, {
-		skip: !hasToken,
-	});
+	const [isInitializing, setIsInitializing] = useState(true);
 
 	useEffect(() => {
-		if (user) {
-			dispatch(UserActions.setAuthData(user));
-			return;
-		}
+		const token = getAccessToken();
+		const user = getUserData();
 
-		if (!hasToken) {
+		if (token && user) {
+			dispatch(UserActions.setAuthData(user));
+		} else {
 			dispatch(UserActions.clearAuthData());
 		}
-	}, [user, hasToken, dispatch]);
+		
+		setIsInitializing(false);
+	}, [dispatch]);
 
-	if (isLoading) {
+	if (isInitializing) {
 		return <PageLoader />;
 	}
 

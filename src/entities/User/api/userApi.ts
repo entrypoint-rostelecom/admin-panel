@@ -39,10 +39,6 @@ interface CreateAdminUserDto {
 
 const userApi = rtkApi.injectEndpoints({
 	endpoints: (build) => ({
-		getMe: build.query<User, undefined>({
-			query: () => "/api/v1/admin/users/me", // Assuming there is a me endpoint, but documentation didn't explicitly show it. Usually it exists.
-		}),
-
 		adminSignIn: build.mutation<User & { accessToken: string }, SignInDto>({
 			query: (authData) => ({
 				url: "/api/v1/admin/login",
@@ -92,9 +88,9 @@ const userApi = rtkApi.injectEndpoints({
 			providesTags: ["AccessLogs"],
 		}),
 
-		signOut: build.mutation<void, void>({
+		adminLogout: build.mutation<void, void>({
 			query: () => ({
-				url: "/api/v1/user/logout",
+				url: "/api/v1/admin/logout",
 				method: "POST",
 			}),
 		}),
@@ -108,6 +104,5 @@ export const {
 	useDeleteAdminUserMutation,
 	useFreezeAdminUserMutation,
 	useGetAccessLogsQuery,
-	useSignOutMutation,
-	useGetMeQuery,
+	useAdminLogoutMutation,
 } = userApi;

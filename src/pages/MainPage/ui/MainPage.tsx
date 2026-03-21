@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { Page } from "@/widgets/Page";
-import { clearAccessToken, useSignOutMutation, useUserActions } from "@/entities/User";
+import { clearAccessToken, useAdminLogoutMutation, useUserActions } from "@/entities/User";
 import { getRouteLogin, getRouteRegister, getRouteUsers } from "@/shared/consts/router";
 import { useAppSelector } from "@/shared/lib/hooks";
 import classes from "./MainPage.module.css";
@@ -9,10 +9,10 @@ import classes from "./MainPage.module.css";
 const MainPage = memo(() => {
 	const user = useAppSelector((state) => state.user.authData);
 	const { clearAuthData } = useUserActions();
-	const [signOut] = useSignOutMutation();
+	const [adminLogout] = useAdminLogoutMutation();
 
 	const onLogout = () => {
-		signOut(undefined)
+		adminLogout(undefined)
 			.unwrap()
 			.catch(() => undefined)
 			.then(() => {

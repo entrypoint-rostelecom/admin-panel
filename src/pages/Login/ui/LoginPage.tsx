@@ -2,9 +2,11 @@ import { SignInDto, setAccessToken, useAdminSignInMutation, useUserActions } fro
 import { getRouteRegister, getRouteUsers } from "@/shared/consts/router";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import classes from "./LoginPage.module.css";
 
 const LoginPage = () => {
+	const { t } = useTranslation();
 	const [authData, setAuthData] = useState<SignInDto>({
 		login: "",
 		password: "",
@@ -18,18 +20,18 @@ const LoginPage = () => {
 		e.preventDefault();
 
 		if (!authData.login.trim() || !authData.password.trim()) {
-			setError("Заполните логин и пароль");
+			setError(t("login.error.empty"));
 			return;
 		}
 
 		setError("");
 		try {
 			const response = await adminSignIn(authData).unwrap();
-			setAccessToken(response.accessToken);
+			setAccessToken(response.accessToken, response);
 			setAuthDataRedux(response);
 			nav(getRouteUsers());
 		} catch (e) {
-			setError("Неверный логин или пароль");
+			setError(t("login.error.invalid"));
 		}
 	};
 
@@ -39,22 +41,22 @@ const LoginPage = () => {
 				<div className={classes.logoContainer}>
 					<img 
 						src="/assets/Image/RGB_RT_logo-horizontal_main_ru.png" 
-						alt="Ростелеком" 
+						alt={t("common.brand")} 
 						className={classes.logo} 
 					/>
 				</div>
 
-				<h1 className={classes.title}>Цифровой пропуск</h1>
+				<h1 className={classes.title}>{t("login.title")}</h1>
 
 				<form onSubmit={onSubmit} className={classes.form}>
 					<div className={classes.fieldGroup}>
 						<label className={classes.label} htmlFor="login">
-							Имя пользователя:
+							{t("login.label.username")}
 						</label>
 						<input
 							id="login"
 							className={classes.field}
-							placeholder="Введите логин"
+							placeholder={t("login.placeholder.username")}
 							value={authData.login}
 							onChange={(e) => setAuthData((prev) => ({ ...prev, login: e.target.value }))}
 						/>
@@ -62,12 +64,12 @@ const LoginPage = () => {
 
 					<div className={classes.fieldGroup}>
 						<label className={classes.label} htmlFor="password">
-							Пароль:
+							{t("login.label.password")}
 						</label>
 						<input
 							id="password"
 							className={classes.field}
-							placeholder="Введите пароль"
+							placeholder={t("login.placeholder.password")}
 							type="password"
 							value={authData.password}
 							onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
@@ -75,16 +77,16 @@ const LoginPage = () => {
 					</div>
 
 					<button type="submit" className={classes.button} disabled={isLoading}>
-						{isLoading ? "Вход..." : "Войти"}
+						{isLoading ? t("login.button.loading") : t("login.button.submit")}
 					</button>
 
 					{error ? <p className={classes.error}>{error}</p> : null}
 				</form>
 
 				<div className={classes.footer}>
-					Нет аккаунта?{" "}
+					{t("login.footer.text")}{" "}
 					<Link to={getRouteRegister()} className={classes.link}>
-						Зарегистрируйтесь
+						{t("login.footer.link")}
 					</Link>
 				</div>
 			</div>

@@ -4,7 +4,7 @@ import {
 	useDeleteAdminUserMutation,
 	useFreezeAdminUserMutation,
 	useGetAdminUsersQuery,
-	useSignOutMutation,
+	useAdminLogoutMutation,
 	useUserActions,
 } from "@/entities/User";
 import {
@@ -20,6 +20,7 @@ import {
 import { memo, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Page } from "@/widgets/Page";
+import { useTranslation } from "react-i18next";
 import classes from "./UsersPage.module.css";
 
 type UserStatus = "active" | "blocked";
@@ -32,18 +33,19 @@ interface UserRow {
 }
 
 const NAV_ITEMS = [
-	{ label: "Дашборд", path: getRouteDashboard() },
-	{ label: "Заявки", path: getRouteRequests() },
-	{ label: "Пользователи", path: getRouteUsers() },
-	{ label: "Проходы", path: getRoutePasses() },
-	{ label: "Устройства", path: getRouteDevices() },
-	{ label: "Настройка системы", path: getRouteSystemSettings() },
-	{ label: "Логи безопасности", path: getRouteSecurityLogs() },
+	{ label: "sidebar.dashboard", path: getRouteDashboard() },
+	{ label: "sidebar.requests", path: getRouteRequests() },
+	{ label: "sidebar.users", path: getRouteUsers() },
+	{ label: "sidebar.passes", path: getRoutePasses() },
+	{ label: "sidebar.devices", path: getRouteDevices() },
+	{ label: "sidebar.settings", path: getRouteSystemSettings() },
+	{ label: "sidebar.logs", path: getRouteSecurityLogs() },
 ];
 
-const TABLE_HEAD = ["ФИО", "Логин", "Статус", "Действие"];
+const TABLE_HEAD = ["users.table.fullname", "users.table.login", "users.table.status", "users.table.action"];
 
 const UsersPage = memo(() => {
+	const { t } = useTranslation();
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | UserStatus>("all");
 	const [isStatusOpen, setIsStatusOpen] = useState(false);
@@ -57,7 +59,7 @@ const UsersPage = memo(() => {
 	const [createUserError, setCreateUserError] = useState("");
 	const nav = useNavigate();
 	const location = useLocation();
-	const [signOut] = useSignOutMutation();
+	const [adminLogout] = useAdminLogoutMutation();
 	const { data: usersResponse = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
 	const [createAdminUser, { isLoading: isCreatingUser }] = useCreateAdminUserMutation();
 	const [deleteAdminUser] = useDeleteAdminUserMutation();
@@ -87,7 +89,7 @@ const UsersPage = memo(() => {
 	}, [users, search, statusFilter]);
 
 	const onLogout = () => {
-		signOut(undefined)
+		adminLogout(undefined)
 			.unwrap()
 			.catch(() => undefined)
 			.finally(() => {
@@ -99,12 +101,12 @@ const UsersPage = memo(() => {
 
 	const onCreateUser = async () => {
 		if (!newUser.fullName.trim() || !newUser.login.trim() || !newUser.password.trim()) {
-			setCreateUserError("Заполните все поля");
+			setCreateUserError(t("users.modal.error.empty"));
 			return;
 		}
 
 		if (newUser.login.includes("@")) {
-			setCreateUserError("Логин должен быть без @ (например: ivanov_ia)");
+			setCreateUserError(t("users.modal.error.format"));
 			return;
 		}
 
@@ -126,7 +128,7 @@ const UsersPage = memo(() => {
 				e?.data?.detail?.[0]?.msg ||
 				e?.data?.detail ||
 				e?.data?.message ||
-				"Ошибка создания пользователя. Проверьте формат логина и пароль.";
+				t("users.modal.error.server");
 			setCreateUserError(String(backendMessage));
 		}
 	};
@@ -154,8 +156,8 @@ const UsersPage = memo(() => {
 					<div className={classes.usersPage__brand}>
 						<div className={classes.usersPage__brandLogo}>Р</div>
 						<div className={classes.usersPage__brandText}>
-							<p className={classes.usersPage__brandTitle}>Точка входа</p>
-							<p className={classes.usersPage__brandSubtitle}>Админ-панель</p>
+							<p className={classes.usersPage__brandTitle}>{t("common.app_name")}</p>
+							<p className={classes.usersPage__brandSubtitle}>{t("common.admin_panel")}</p>
 						</div>
 					</div>
 
@@ -166,10 +168,11 @@ const UsersPage = memo(() => {
 						</span>
 						<span className={classes.usersPage__profileAvatar}>AS</span>
 					</button>
+					
 					{isProfileOpen ? (
 						<div className={classes.usersPage__profileMenu}>
 							<button type="button" className={classes.usersPage__profileMenuButton} onClick={onLogout}>
-								Выйти
+								{t("common.logout")}
 							</button>
 						</div>
 					) : null}
@@ -188,7 +191,7 @@ const UsersPage = memo(() => {
 										className={`${classes.usersPage__navItem} ${isActive ? classes["usersPage__navItem--active"] : ""}`}
 									>
 										<span className={classes.usersPage__navIcon} />
-										<span>{item.label}</span>
+										<span>{t(item.label)}</span>
 									</button>
 								);
 							})}
@@ -197,8 +200,8 @@ const UsersPage = memo(() => {
 						<div className={classes.usersPage__sidebarFooter}>
 							<div className={classes.usersPage__sidebarMark}>Р</div>
 							<div>
-								<p className={classes.usersPage__sidebarName}>Ростелеком</p>
-								<p className={classes.usersPage__sidebarSubname}>Точка входа</p>
+								<p className={classes.usersPage__sidebarName}>{t("common.brand")}</p>
+								<p className={classes.usersPage__sidebarSubname}>{t("common.app_name")}</p>
 							</div>
 						</div>
 					</aside>
@@ -206,12 +209,12 @@ const UsersPage = memo(() => {
 					<section className={classes.usersPage__content}>
 						<div className={classes.usersPage__contentHeader}>
 							<div>
-								<h1 className={classes.usersPage__title}>Пользователи системы</h1>
-								<p className={classes.usersPage__subtitle}>Управление доступом сотрудников</p>
+								<h1 className={classes.usersPage__title}>{t("users.title")}</h1>
+								<p className={classes.usersPage__subtitle}>{t("users.subtitle")}</p>
 							</div>
 							<button className={classes.usersPage__createButton} type="button" onClick={() => setIsCreateOpen(true)}>
 								<span className={classes.usersPage__plusIcon} />
-								Создать пользователя
+								{t("users.button.create")}
 							</button>
 						</div>
 
@@ -220,7 +223,7 @@ const UsersPage = memo(() => {
 								<span className={classes.usersPage__searchIcon} />
 								<input
 									className={classes.usersPage__searchInput}
-									placeholder="Поиск по ФИО, логину или e-mail..."
+									placeholder={t("users.search.placeholder")}
 									value={search}
 									onChange={(event) => setSearch(event.target.value)}
 								/>
@@ -232,7 +235,7 @@ const UsersPage = memo(() => {
 									setIsStatusOpen((prev) => !prev);
 								}}
 							>
-								{statusFilter === "all" ? "Все статусы" : statusFilter === "active" ? "Активен" : "Заблокирован"}
+								{statusFilter === "all" ? t("users.filter.all") : statusFilter === "active" ? t("users.filter.active") : t("users.filter.blocked")}
 								<span className={classes.usersPage__chevron} />
 							</button>
 							{isStatusOpen ? (
@@ -244,7 +247,7 @@ const UsersPage = memo(() => {
 											setIsStatusOpen(false);
 										}}
 									>
-										Все статусы
+										{t("users.filter.all")}
 									</button>
 									<button
 										type="button"
@@ -253,7 +256,7 @@ const UsersPage = memo(() => {
 											setIsStatusOpen(false);
 										}}
 									>
-										Активен
+										{t("users.filter.active")}
 									</button>
 									<button
 										type="button"
@@ -262,7 +265,7 @@ const UsersPage = memo(() => {
 											setIsStatusOpen(false);
 										}}
 									>
-										Заблокирован
+										{t("users.filter.blocked")}
 									</button>
 								</div>
 							) : null}
@@ -273,7 +276,7 @@ const UsersPage = memo(() => {
 								<thead>
 									<tr>
 										{TABLE_HEAD.map((head) => (
-											<th key={head}>{head}</th>
+											<th key={head}>{t(head)}</th>
 										))}
 									</tr>
 								</thead>
@@ -291,7 +294,7 @@ const UsersPage = memo(() => {
 													}`}
 												>
 													<span className={classes.usersPage__statusDot} />
-													{user.status === "active" ? "Активен" : "Заблокирован"}
+													{user.status === "active" ? t("users.filter.active") : t("users.filter.blocked")}
 												</span>
 											</td>
 											<td>
@@ -302,7 +305,7 @@ const UsersPage = memo(() => {
 															className={classes.usersPage__freezeButton}
 															onClick={() => onFreezeUser(user.id)}
 														>
-															Заморозить
+															{t("users.action.freeze")}
 														</button>
 													) : null}
 													<button
@@ -310,7 +313,7 @@ const UsersPage = memo(() => {
 														className={classes.usersPage__deleteButton}
 														onClick={() => onDeleteUser(user.id)}
 													>
-														Удалить
+														{t("users.action.delete")}
 													</button>
 												</div>
 											</td>
@@ -319,14 +322,14 @@ const UsersPage = memo(() => {
 									{isUsersLoading ? (
 										<tr>
 											<td colSpan={4} className={classes.usersPage__empty}>
-												Загрузка пользователей...
+												{t("users.table.loading")}
 											</td>
 										</tr>
 									) : null}
 									{filteredUsers.length === 0 ? (
 										<tr>
 											<td colSpan={4} className={classes.usersPage__empty}>
-												Нет пользователей по выбранным фильтрам
+												{t("users.table.empty")}
 											</td>
 										</tr>
 									) : null}
@@ -339,20 +342,20 @@ const UsersPage = memo(() => {
 			{isCreateOpen ? (
 				<div className={classes.usersPage__modalBackdrop} onClick={() => setIsCreateOpen(false)}>
 					<div className={classes.usersPage__modal} onClick={(event) => event.stopPropagation()}>
-						<h3 className={classes.usersPage__modalTitle}>Создать пользователя</h3>
+						<h3 className={classes.usersPage__modalTitle}>{t("users.modal.title")}</h3>
 						<label className={classes.usersPage__modalLabel}>
-							ФИО
+							{t("users.modal.fullname.label")}
 							<input
 								value={newUser.fullName}
 								onChange={(event) => setNewUser((prev) => ({ ...prev, fullName: event.target.value }))}
 							/>
 						</label>
 						<label className={classes.usersPage__modalLabel}>
-							Логин
+							{t("users.modal.login.label")}
 							<input value={newUser.login} onChange={(event) => setNewUser((prev) => ({ ...prev, login: event.target.value }))} />
 						</label>
 						<label className={classes.usersPage__modalLabel}>
-							Пароль
+							{t("users.modal.password.label")}
 							<input
 								type="password"
 								value={newUser.password}
@@ -361,10 +364,10 @@ const UsersPage = memo(() => {
 						</label>
 						<div className={classes.usersPage__modalActions}>
 							<button type="button" onClick={() => setIsCreateOpen(false)}>
-								Отмена
+								{t("common.cancel")}
 							</button>
 							<button type="button" onClick={onCreateUser} disabled={isCreatingUser}>
-								Создать
+								{t("common.create")}
 							</button>
 						</div>
 						{createUserError ? <p className={classes.usersPage__modalError}>{createUserError}</p> : null}

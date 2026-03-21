@@ -1,0 +1,108 @@
+{
+	"common": {
+		"brand": "Rostelecom",
+		"app_name": "Entry Point",
+		"admin_panel": "Admin Panel",
+		"logout": "Logout",
+		"cancel": "Cancel",
+		"create": "Create",
+		"loading": "Loading..."
+	},
+	"sidebar": {
+		"dashboard": "Dashboard",
+		"requests": "Requests",
+		"users": "Users",
+		"passes": "Passes",
+		"devices": "Devices",
+		"settings": "System Settings",
+		"logs": "Security Logs"
+	},
+	"login": {
+		"title": "Digital Pass",
+		"label": {
+			"username": "Username:",
+			"password": "Password:"
+		},
+		"placeholder": {
+			"username": "Enter username",
+			"password": "Enter password"
+		},
+		"button": {
+			"submit": "Sign In",
+			"loading": "Signing in..."
+		},
+		"footer": {
+			"text": "Don't have an account?",
+			"link": "Sign Up"
+		},
+		"error": {
+			"empty": "Please fill in username and password",
+			"invalid": "Invalid username or password"
+		}
+	},
+	"register": {
+		"title": "Registration",
+		"label": {
+			"username": "Username:",
+			"password": "Password:"
+		},
+		"placeholder": {
+			"username": "Create username",
+			"password": "Create password"
+		},
+		"button": {
+			"submit": "Create Account"
+		},
+		"footer": {
+			"text": "Already have an account?",
+			"link": "Sign In"
+		},
+		"error": {
+			"empty": "Please fill in all fields"
+		}
+	},
+	"users": {
+		"title": "System Users",
+		"subtitle": "Employee Access Management",
+		"button": {
+			"create": "Create User"
+		},
+		"search": {
+			"placeholder": "Search by Name, Username or Email..."
+		},
+		"filter": {
+			"all": "All Statuses",
+			"active": "Active",
+			"blocked": "Blocked"
+		},
+		"table": {
+			"fullname": "Full Name",
+			"login": "Username",
+			"status": "Status",
+			"action": "Action",
+			"empty": "No users found matching filters",
+			"loading": "Loading users..."
+		},
+		"action": {
+			"freeze": "Freeze",
+			"delete": "Delete"
+		},
+		"modal": {
+			"title": "Create User",
+			"fullname": {
+				"label": "Full Name"
+			},
+			"login": {
+				"label": "Username"
+			},
+			"password": {
+				"label": "Password"
+			},
+			"error": {
+				"empty": "Please fill in all fields",
+				"format": "Username should not contain @ (e.g., ivanov_ia)",
+				"server": "Error creating user. Check username format and password."
+			}
+		}
+	}
+}

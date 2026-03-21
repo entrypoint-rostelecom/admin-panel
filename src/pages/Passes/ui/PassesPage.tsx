@@ -1,4 +1,4 @@
-import { clearAccessToken, useSignOutMutation, useUserActions } from "@/entities/User";
+import { clearAccessToken, useAdminLogoutMutation, useUserActions } from "@/entities/User";
 import {
 	getRouteDashboard,
 	getRouteDevices,
@@ -92,11 +92,11 @@ const PassesPage = memo(() => {
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
 	const nav = useNavigate();
 	const location = useLocation();
-	const [signOut] = useSignOutMutation();
+	const [adminLogout] = useAdminLogoutMutation();
 	const { clearAuthData } = useUserActions();
 
 	const onLogout = () => {
-		signOut(undefined)
+		adminLogout(undefined)
 			.unwrap()
 			.catch(() => undefined)
 			.finally(() => {
