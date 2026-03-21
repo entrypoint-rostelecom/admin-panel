@@ -1,0 +1,404 @@
+import { memo, useState, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Page } from "@/widgets/Page";
+import { 
+	clearAccessToken, 
+	useAdminLogoutMutation, 
+	useUserActions,
+	useGetAdminUsersQuery,
+	useGetAccessLogsQuery
+} from "@/entities/User";
+import {
+	getRouteDashboard,
+	getRouteDevices,
+	getRouteMain,
+	getRoutePasses,
+	getRouteRequests,
+	getRouteSecurityLogs,
+	getRouteSystemSettings,
+	getRouteUsers,
+} from "@/shared/consts/router";
+import classes from "./SecurityLogsPage.module.css";
+
+const NAV_ITEMS = [
+	{ label: "Дашборд", path: getRouteDashboard() },
+	{ label: "Заявки", path: getRouteRequests() },
+	{ label: "Пользователи", path: getRouteUsers() },
+	{ label: "Проходы", path: getRoutePasses() },
+	{ label: "Устройства", path: getRouteDevices() },
+	{ label: "Настройка системы", path: getRouteSystemSettings() },
+	{ label: "Логи безопасности", path: getRouteSecurityLogs() },
+];
+
+const SecurityLogsPage = memo(() => {
+	const nav = useNavigate();
+	const location = useLocation();
+	const [isProfileOpen, setIsProfileOpen] = useState(false);
+	const [adminLogout] = useAdminLogoutMutation();
+	const { clearAuthData } = useUserActions();
+
+	const { data: users = [] } = useGetAdminUsersQuery();
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
+
+	const [search, setSearch] = useState("");
+	const [dateFilter, setDateFilter] = useState("");
+	const [typeFilter, setTypeFilter] = useState("Все типы");
+	const [adminFilter, setAdminFilter] = useState("Все админы");
+
+	const [currentPage, setCurrentPage] = useState(1);
+	const pageSize = 10;
+
+	const tableData = useMemo(() => {
+		let filtered = logs.map((log) => {
+			const user = users.find(u => u.id === log.user_id);
+			const adminName = user ? user.full_name : `ID ${log.user_id}`;
+			
+			const date = new Date(log.timestamp);
+			const timeStr = isNaN(date.getTime()) 
+				? log.timestamp 
+				: date.toLocaleString('ru-RU', {
+					day: '2-digit', month: '2-digit', year: 'numeric',
+					hour: '2-digit', minute: '2-digit', second: '2-digit'
+				}).replace(',', '');
+
+			const isSuccess = log.result?.toLowerCase().includes("granted") || log.result?.toLowerCase().includes("success");
+
+			return {
+				time: timeStr,
+				rawDate: date,
+				admin: adminName,
+				action: isSuccess ? "Проход через сканер" : "Попытка прохода",
+				typeText: isSuccess ? "Авторизация" : "Отказ в доступе",
+				typeColor: isSuccess ? "purple" : "orange", 
+				details: `${isSuccess ? "Успешная авторизация" : "Отказ"}. ${log.reason ? `Причина: ${log.reason}` : ""}`,
+				ip: `Сканер #${log.scanner_id}`
+			};
+		});
+
+		if (search) {
+			const q = search.toLowerCase();
+			filtered = filtered.filter(r => 
+				r.admin.toLowerCase().includes(q) || 
+				r.action.toLowerCase().includes(q) || 
+				r.details.toLowerCase().includes(q)
+			);
+		}
+
+		if (dateFilter) {
+			filtered = filtered.filter(r => {
+				const d = r.rawDate;
+				if (isNaN(d.getTime())) return true;
+				const filterD = new Date(dateFilter);
+				return d.getFullYear() === filterD.getFullYear() &&
+					   d.getMonth() === filterD.getMonth() &&
+					   d.getDate() === filterD.getDate();
+			});
+		}
+
+		if (typeFilter !== "Все типы") {
+			filtered = filtered.filter(r => r.typeText === typeFilter);
+		}
+
+		if (adminFilter !== "Все админы") {
+			filtered = filtered.filter(r => r.admin === adminFilter);
+		}
+
+		return filtered;
+	}, [logs, users, search, dateFilter, typeFilter, adminFilter]);
+
+	const totalPages = Math.ceil(tableData.length / pageSize);
+	const paginatedData = useMemo(() => {
+		const start = (currentPage - 1) * pageSize;
+		return tableData.slice(start, start + pageSize);
+	}, [tableData, currentPage]);
+
+	const stats = useMemo(() => {
+		const success = tableData.filter(r => r.typeColor === "purple").length;
+		const denied = tableData.filter(r => r.typeColor === "orange").length;
+		const uniqueScanners = new Set(logs.map(l => l.scanner_id)).size;
+		return {
+			total: tableData.length,
+			success,
+			denied,
+			scanners: uniqueScanners
+		};
+	}, [tableData, logs]);
+
+	const onLogout = () => {
+		adminLogout(undefined)
+			.unwrap()
+			.catch(() => undefined)
+			.finally(() => {
+				clearAccessToken();
+				clearAuthData();
+				nav(getRouteMain());
+			});
+	};
+
+	return (
+		<Page>
+			<div className={classes.page}>
+				
+				{/* TOPBAR */}
+				<header className={classes.topbar}>
+					<div className={classes.brand}>
+						<div className={classes.brandLogo}>Р</div>
+						<div className={classes.brandText}>
+							<p className={classes.brandTitle}>Точка входа</p>
+							<p className={classes.brandSubtitle}>Админ-панель</p>
+						</div>
+					</div>
+
+					<div className={classes.topbarRight}>
+						<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
+							<span className={classes.profileInfo}>
+								<span className={classes.profileName}>Иванова А.С.</span>
+								<span className={classes.profileRole}>Администратор</span>
+							</span>
+							<span className={classes.profileAvatar}>
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+							</span>
+						</button>
+						{isProfileOpen ? (
+							<div className={classes.profileMenu}>
+								<button type="button" className={classes.profileMenuButton} onClick={onLogout}>
+									Выйти
+								</button>
+							</div>
+						) : null}
+					</div>
+				</header>
+
+				{/* LAYOUT GRID */}
+				<div className={classes.layout}>
+					
+					{/* SIDEBAR */}
+					<aside className={classes.sidebar}>
+						<nav className={classes.nav}>
+							{NAV_ITEMS.map((item) => {
+								const isActive = location.pathname === item.path;
+								return (
+									<button
+										key={item.label}
+										type="button"
+										onClick={() => nav(item.path)}
+										className={`${classes.navItem} ${isActive ? classes["navItem--active"] : ""}`}
+									>
+										{isActive && <div className={classes.navActiveIndicator} />}
+										<span className={classes.navIcon}>
+											{item.label === "Дашборд" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>}
+											{item.label === "Заявки" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>}
+											{item.label === "Пользователи" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
+											{item.label === "Проходы" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>}
+											{item.label === "Устройства" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>}
+											{item.label === "Настройка системы" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>}
+											{item.label === "Логи безопасности" && <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>}
+										</span>
+										<span>{item.label}</span>
+									</button>
+								);
+							})}
+						</nav>
+
+						<div className={classes.sidebarFooter}>
+							<div className={classes.sidebarMark}>Р</div>
+							<div>
+								<p className={classes.sidebarName}>Ростелеком</p>
+								<p className={classes.sidebarSubname}>Точка входа</p>
+							</div>
+						</div>
+					</aside>
+
+					{/* MAIN CONTENT */}
+					<section className={classes.content}>
+						<div className={classes.contentBox}>
+							<div className={classes.contentHeader}>
+								<div>
+									<h1 className={classes.title}>Логи безопасности</h1>
+									<p className={classes.subtitle}>Журнал системных событий и действий администраторов</p>
+								</div>
+								<button className={classes.exportBtn}>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+									Экспорт отчёта
+								</button>
+							</div>
+
+							{/* FILTERS */}
+							<div className={classes.filtersBar}>
+								<div className={classes.searchInputWrap}>
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#667085" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+									<input 
+										type="text" 
+										placeholder="Поиск по администратору или действию..." 
+										className={classes.searchInput} 
+										value={search}
+										onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+									/>
+								</div>
+								
+								<div className={classes.dateInputWrap}>
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#667085" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+									<input 
+										type="date" 
+										className={classes.dateInput} 
+										value={dateFilter}
+										onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
+									/>
+								</div>
+
+								<div className={classes.selectsWrap}>
+									<select 
+										className={classes.filterSelect}
+										value={typeFilter}
+										onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
+									>
+										<option>Все типы</option>
+										<option>Авторизация</option>
+										<option>Отказ в доступе</option>
+									</select>
+									<select 
+										className={classes.filterSelect}
+										value={adminFilter}
+										onChange={(e) => { setAdminFilter(e.target.value); setCurrentPage(1); }}
+									>
+										<option>Все админы</option>
+										{Array.from(new Set(logs.map(l => {
+											const u = users.find(user => user.id === l.user_id);
+											return u ? u.full_name : `ID ${l.user_id}`;
+										}))).map(name => (
+											<option key={name} value={name}>{name}</option>
+										))}
+									</select>
+								</div>
+							</div>
+
+							{/* STAT CARDS */}
+							<div className={classes.statsGrid}>
+								<div className={classes.statCard}>
+									<div className={classes.statIconPurple}>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+									</div>
+									<div className={classes.statText}>
+										<h2 className={classes.statNumber}>{isLogsLoading ? "..." : stats.total}</h2>
+										<p className={classes.statLabel}>Всего событий</p>
+									</div>
+								</div>
+								<div className={classes.statCard}>
+									<div className={classes.statIconGreen}>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+									</div>
+									<div className={classes.statText}>
+										<h2 className={classes.statNumber}>{isLogsLoading ? "..." : stats.success}</h2>
+										<p className={classes.statLabel}>Разрешено</p>
+									</div>
+								</div>
+								<div className={classes.statCard}>
+									<div className={classes.statIconOrange}>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+									</div>
+									<div className={classes.statText}>
+										<h2 className={classes.statNumber}>{isLogsLoading ? "..." : stats.denied}</h2>
+										<p className={classes.statLabel}>Отказов</p>
+									</div>
+								</div>
+								<div className={classes.statCard}>
+									<div className={classes.statIconYellow}>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+									</div>
+									<div className={classes.statText}>
+										<h2 className={classes.statNumber}>{isLogsLoading ? "..." : stats.scanners}</h2>
+										<p className={classes.statLabel}>Активных сканеров</p>
+									</div>
+								</div>
+							</div>
+
+							{/* TABLE */}
+							<div className={classes.tableWrap}>
+								<table className={classes.table}>
+									<thead>
+										<tr>
+											<th style={{width: '180px'}}>Время</th>
+											<th>Администратор</th>
+											<th>Действие</th>
+											<th>Тип</th>
+											<th>Детали</th>
+											<th>Номер сканера</th>
+										</tr>
+									</thead>
+									<tbody>
+										{isLogsLoading ? (
+											<tr>
+												<td colSpan={6} style={{textAlign: "center", padding: "32px", color: "#667085"}}>Загрузка логов...</td>
+											</tr>
+										) : paginatedData.length > 0 ? (
+											paginatedData.map((row, idx) => (
+												<tr key={idx}>
+													<td>
+														<div className={classes.tdIconWrapper}>
+															<div className={row.typeColor === "purple" ? classes.tdIconPurple : classes.tdIconOrange}>
+																<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+																	{row.typeColor === "purple" 
+																		? <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+																		: <circle cx="12" cy="12" r="10"></circle>
+																	}
+																</svg>
+															</div>
+															{row.time}
+														</div>
+													</td>
+													<td>{row.admin}</td>
+													<td>{row.action}</td>
+													<td>
+														<span className={`${classes.typeBadge} ${row.typeColor === "purple" ? classes.typeBadgePurple : classes.typeBadgeOrange}`}>
+															{row.typeText}
+														</span>
+													</td>
+													<td className={classes.tdDetails}>{row.details}</td>
+													<td className={classes.tdIp}>{row.ip}</td>
+												</tr>
+											))
+										) : (
+											<tr>
+												<td colSpan={6} style={{textAlign: "center", padding: "32px", color: "#667085"}}>События не найдены</td>
+											</tr>
+										)}
+									</tbody>
+								</table>
+
+								{totalPages > 1 && (
+									<div className={classes.pagination}>
+										<button 
+											className={classes.pageBtnText} 
+											onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+											disabled={currentPage === 1}
+										>
+											&lt; Previous
+										</button>
+										{Array.from({length: totalPages}, (_, i) => i + 1).map(page => (
+											<button 
+												key={page}
+												className={`${classes.pageBtn} ${currentPage === page ? classes.pageBtnActive : ""}`}
+												onClick={() => setCurrentPage(page)}
+											>
+												{page}
+											</button>
+										))}
+										<button 
+											className={classes.pageBtnText} 
+											onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+											disabled={currentPage === totalPages}
+										>
+											Next &gt;
+										</button>
+									</div>
+								)}
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</Page>
+	);
+});
+
+export default SecurityLogsPage;

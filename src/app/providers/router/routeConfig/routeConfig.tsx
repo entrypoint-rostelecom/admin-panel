@@ -1,5 +1,6 @@
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { DashboardPage as LazyDashboardPage } from "@/pages/Dashboard";
+import { SecurityLogsPage as LazySecurityLogsPage } from "@/pages/SecurityLogs";
 import { LazyMainPage } from "@/pages/MainPage";
 import { LazyPassesPage } from "@/pages/Passes";
 import { LazySystemSettingsPage } from "@/pages/SystemSettings";
@@ -60,7 +61,7 @@ export const routeConfig: Record<AppRoutes, AppRouteProps> = {
 	},
 	[AppRoutes.SECURITY_LOGS]: {
 		path: getRouteSecurityLogs(),
-		element: <NotFoundPage />,
+		element: <LazySecurityLogsPage />,
 		authOnly: true,
 	},
 	[AppRoutes.NOT_FOUND]: {

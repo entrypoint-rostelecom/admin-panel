@@ -42,8 +42,19 @@ const DashboardPage = memo(() => {
 	const { data: users = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
 	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
 
-	const activeUsersCount = users.filter(u => u.is_active && !u.is_deleted).length;
-	const blockedUsersCount = users.filter(u => !u.is_active && !u.is_deleted).length;
+	const activeLastMonthCount = useMemo(() => {
+		const monthAgo = new Date();
+		monthAgo.setMonth(monthAgo.getMonth() - 1);
+		return users.filter(u => u.is_active && !u.is_deleted && new Date(u.created_at) >= monthAgo).length;
+	}, [users]);
+
+	const totalBlockedCount = useMemo(() => {
+		return users.filter(u => !u.is_active && !u.is_deleted).length;
+	}, [users]);
+
+	const insideCount = useMemo(() => {
+		return users.filter(u => u.is_inside && !u.is_deleted).length;
+	}, [users]);
 
 	const recentEvents = useMemo(() => {
 		return logs.slice(0, 5).map(log => {
@@ -163,8 +174,8 @@ const DashboardPage = memo(() => {
 									</div>
 									<span className={classes.badgeGreen}>+12%</span>
 								</div>
-								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : activeUsersCount}</h2>
-								<p className={classes.kpiDesc}>Активных пользователей<br/>за период</p>
+								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : activeLastMonthCount}</h2>
+								<p className={classes.kpiDesc}>Активных за месяц</p>
 							</div>
 							
 							<div className={classes.kpiCard}>
@@ -172,20 +183,19 @@ const DashboardPage = memo(() => {
 									<div className={classes.iconWrapperRed}>
 										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
 									</div>
-									<span className={classes.badgeRed}>-3%</span>
 								</div>
-								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : blockedUsersCount}</h2>
-								<p className={classes.kpiDesc}>Заблокировано<br/>за период</p>
+								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : totalBlockedCount}</h2>
+								<p className={classes.kpiDesc}>Всего заблокировано</p>
 							</div>
 
 							<div className={classes.kpiCard}>
 								<div className={classes.kpiCardHeader}>
 									<div className={classes.iconWrapperOrange}>
-										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+										<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
 									</div>
 								</div>
-								<h2 className={classes.kpiNumber}>{NEW_REQUESTS.length}</h2>
-								<p className={classes.kpiDesc}>Новых заявок сегодня</p>
+								<h2 className={classes.kpiNumber}>{isUsersLoading ? "..." : insideCount}</h2>
+								<p className={classes.kpiDesc}>Сотрудников внутри</p>
 							</div>
 						</div>
 

@@ -50,7 +50,12 @@
 .profileMenuButton { border: 0; background: transparent; padding: 10px 16px; cursor: pointer; font-size: 14px; }
 
 /* LAYOUT */
-.layout { display: grid; grid-template-columns: 256px 1fr; }
+.layout { 
+	flex: 1;
+	display: grid; 
+	grid-template-columns: 256px 1fr; 
+	width: 100%;
+}
 
 /* SIDEBAR */
 .sidebar {
