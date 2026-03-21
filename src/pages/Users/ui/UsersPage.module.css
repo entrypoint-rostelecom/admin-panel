@@ -9,6 +9,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	position: relative;
 	height: 64px;
 	padding: 0 24px;
 	background: #7700ff;
@@ -66,6 +67,7 @@
 	border-radius: 16px;
 	background: transparent;
 	color: #fff;
+	cursor: pointer;
 }
 
 .usersPage__profileInfo {
@@ -95,6 +97,25 @@
 	background: rgb(255 255 255 / 20%);
 	font-size: 12px;
 	font-weight: 600;
+}
+
+.usersPage__profileMenu {
+	position: absolute;
+	right: 24px;
+	top: 60px;
+	z-index: 6;
+	background: #fff;
+	border: 1px solid rgb(0 0 0 / 10%);
+	border-radius: 12px;
+	box-shadow: 0 10px 20px rgb(0 0 0 / 10%);
+}
+
+.usersPage__profileMenuButton {
+	border: 0;
+	background: transparent;
+	padding: 10px 16px;
+	cursor: pointer;
+	font-size: 14px;
 }
 
 .usersPage__layout {
@@ -210,6 +231,9 @@
 }
 
 .usersPage__createButton {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 	height: 36px;
 	padding: 0 14px;
 	border: 0;
@@ -218,9 +242,39 @@
 	color: #fff;
 	font-size: 14px;
 	font-weight: 500;
+	cursor: pointer;
+}
+
+.usersPage__plusIcon {
+	width: 16px;
+	height: 16px;
+	position: relative;
+}
+
+.usersPage__plusIcon::before,
+.usersPage__plusIcon::after {
+	content: "";
+	position: absolute;
+	background: #fff;
+	border-radius: 2px;
+}
+
+.usersPage__plusIcon::before {
+	width: 10px;
+	height: 2px;
+	left: 3px;
+	top: 7px;
+}
+
+.usersPage__plusIcon::after {
+	width: 2px;
+	height: 10px;
+	left: 7px;
+	top: 3px;
 }
 
 .usersPage__filters {
+	position: relative;
 	display: grid;
 	grid-template-columns: 595px 290px 290px;
 	gap: 16px;
@@ -242,7 +296,41 @@
 	color: #717182;
 }
 
+.usersPage__searchIcon {
+	width: 16px;
+	height: 16px;
+	border: 2px solid #717182;
+	border-radius: 999px;
+	position: relative;
+	margin-right: 8px;
+	flex-shrink: 0;
+}
+
+.usersPage__searchIcon::after {
+	content: "";
+	position: absolute;
+	width: 6px;
+	height: 2px;
+	background: #717182;
+	transform: rotate(45deg);
+	right: -5px;
+	bottom: -1px;
+	border-radius: 2px;
+}
+
+.usersPage__searchInput {
+	width: 100%;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	font-size: 14px;
+	color: #1a1a1a;
+}
+
 .usersPage__filterButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
 	height: 36px;
 	padding: 0 12px;
 	border: 0;
@@ -252,6 +340,57 @@
 	font-size: 14px;
 	font-weight: 500;
 	text-align: left;
+	cursor: pointer;
+}
+
+.usersPage__chevron {
+	width: 16px;
+	height: 16px;
+	position: relative;
+	flex-shrink: 0;
+}
+
+.usersPage__chevron::after {
+	content: "";
+	position: absolute;
+	left: 4px;
+	top: 5px;
+	width: 7px;
+	height: 7px;
+	border-right: 1.5px solid #717182;
+	border-bottom: 1.5px solid #717182;
+	transform: rotate(45deg);
+}
+
+.usersPage__dropdown {
+	position: absolute;
+	top: 66px;
+	left: 636px;
+	z-index: 5;
+	width: 290px;
+	background: #fff;
+	border: 1px solid rgb(0 0 0 / 10%);
+	border-radius: 12px;
+	box-shadow: 0 10px 20px rgb(0 0 0 / 10%);
+	padding: 4px;
+}
+
+.usersPage__dropdown--office {
+	left: 942px;
+}
+
+.usersPage__dropdown button {
+	width: 100%;
+	border: 0;
+	background: transparent;
+	padding: 8px 10px;
+	text-align: left;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.usersPage__dropdown button:hover {
+	background: rgb(119 0 255 / 8%);
 }
 
 .usersPage__tableWrap {
@@ -291,6 +430,12 @@
 	border-bottom: 0;
 }
 
+.usersPage__empty {
+	text-align: center;
+	color: #717182;
+	font-weight: 400;
+}
+
 .usersPage__muted {
 	font-weight: 400;
 	color: #717182;
@@ -327,9 +472,80 @@
 	border-color: rgb(244 67 54 / 20%);
 }
 
+.usersPage__modalBackdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 30;
+	background: rgb(0 0 0 / 45%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.usersPage__modal {
+	width: 380px;
+	border-radius: 16px;
+	background: #fff;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.usersPage__modalTitle {
+	margin: 0;
+	font-size: 20px;
+}
+
+.usersPage__modalLabel {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 14px;
+	color: #717182;
+}
+
+.usersPage__modalLabel input {
+	height: 36px;
+	border: 1px solid rgb(0 0 0 / 15%);
+	border-radius: 10px;
+	padding: 0 10px;
+}
+
+.usersPage__modalActions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+.usersPage__modalActions button {
+	height: 34px;
+	border-radius: 10px;
+	border: 0;
+	padding: 0 12px;
+	cursor: pointer;
+}
+
+.usersPage__modalActions button:first-child {
+	background: #f2f2f2;
+	color: #1a1a1a;
+}
+
+.usersPage__modalActions button:last-child {
+	background: #7700ff;
+	color: #fff;
+}
+
 @media (max-width: 1300px) {
 	.usersPage__filters {
 		grid-template-columns: 1fr;
+	}
+
+	.usersPage__dropdown,
+	.usersPage__dropdown--office {
+		left: 25px;
+		right: 25px;
+		width: auto;
 	}
 }
 
