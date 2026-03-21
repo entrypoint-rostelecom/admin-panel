@@ -279,7 +279,7 @@
 .usersPage__filters {
 	position: relative;
 	display: grid;
-	grid-template-columns: 595px 290px 290px;
+	grid-template-columns: 1fr 290px;
 	gap: 16px;
 	padding: 25px 25px 1px;
 	border: 1px solid rgb(0 0 0 / 10%);
@@ -407,7 +407,7 @@
 .usersPage__table {
 	width: 100%;
 	border-collapse: collapse;
-	min-width: 1255px;
+	min-width: 680px;
 }
 
 .usersPage__table th {
@@ -473,6 +473,18 @@
 	color: #f44336;
 	background: rgb(244 67 54 / 10%);
 	border-color: rgb(244 67 54 / 20%);
+}
+
+.usersPage__deleteButton {
+	height: 30px;
+	padding: 0 10px;
+	border-radius: 10px;
+	border: 1px solid rgb(244 67 54 / 25%);
+	background: rgb(244 67 54 / 8%);
+	color: #c62828;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
 }
 
 .usersPage__modalBackdrop {

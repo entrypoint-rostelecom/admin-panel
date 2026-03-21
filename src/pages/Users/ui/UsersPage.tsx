@@ -1,4 +1,11 @@
-import { clearAccessToken, useSignOutMutation, useUserActions } from "@/entities/User";
+import {
+	clearAccessToken,
+	useCreateAdminUserMutation,
+	useDeleteAdminUserMutation,
+	useGetAdminUsersQuery,
+	useSignOutMutation,
+	useUserActions,
+} from "@/entities/User";
 import {
 	getRouteDashboard,
 	getRouteDevices,
@@ -17,14 +24,10 @@ import classes from "./UsersPage.module.css";
 type UserStatus = "active" | "blocked";
 
 interface UserRow {
+	id: number;
 	fullName: string;
 	login: string;
-	role: string;
-	office: string;
 	status: UserStatus;
-	lastLogin: string;
-	lastPass: string;
-	passesToday: number;
 }
 
 const NAV_ITEMS = [
@@ -37,70 +40,14 @@ const NAV_ITEMS = [
 	{ label: "Логи безопасности", path: getRouteSecurityLogs() },
 ];
 
-const TABLE_HEAD = ["ФИО", "Логин", "Роль", "Офис", "Статус", "Последний вход", "Последний проход", "Проходов сегодня"];
-
-const INITIAL_USERS: UserRow[] = [
-	{
-		fullName: "Петров Иван Александрович",
-		login: "i.petrov",
-		role: "Сотрудник",
-		office: "Москва",
-		status: "active",
-		lastLogin: "20.03.2026 14:30",
-		lastPass: "20.03.2026 09:15, Вход 1",
-		passesToday: 2,
-	},
-	{
-		fullName: "Сидорова Мария Викторовна",
-		login: "m.sidorova",
-		role: "Сотрудник",
-		office: "Санкт-Петербург",
-		status: "active",
-		lastLogin: "20.03.2026 14:28",
-		lastPass: "20.03.2026 09:00, Вход 2",
-		passesToday: 2,
-	},
-	{
-		fullName: "Иванов Сергей Петрович",
-		login: "s.ivanov",
-		role: "Администратор",
-		office: "Москва",
-		status: "active",
-		lastLogin: "20.03.2026 14:25",
-		lastPass: "20.03.2026 08:45, Вход 1",
-		passesToday: 1,
-	},
-	{
-		fullName: "Козлова Елена Дмитриевна",
-		login: "e.kozlova",
-		role: "Сотрудник",
-		office: "Казань",
-		status: "blocked",
-		lastLogin: "15.03.2026 10:20",
-		lastPass: "15.03.2026 09:30, Вход 1",
-		passesToday: 0,
-	},
-	{
-		fullName: "Морозов Алексей Константинович",
-		login: "a.morozov",
-		role: "Охрана",
-		office: "Москва",
-		status: "active",
-		lastLogin: "20.03.2026 08:00",
-		lastPass: "20.03.2026 08:00, Вход 3",
-		passesToday: 1,
-	},
-];
+const TABLE_HEAD = ["ФИО", "Логин", "Статус", "Действие"];
 
 const UsersPage = memo(() => {
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState<"all" | UserStatus>("all");
-	const [officeFilter, setOfficeFilter] = useState("all");
 	const [isStatusOpen, setIsStatusOpen] = useState(false);
-	const [isOfficeOpen, setIsOfficeOpen] = useState(false);
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
-	const [users, setUsers] = useState(INITIAL_USERS);
 	const [newUser, setNewUser] = useState({
 		fullName: "",
 		login: "",
@@ -109,13 +56,20 @@ const UsersPage = memo(() => {
 	const nav = useNavigate();
 	const location = useLocation();
 	const [signOut] = useSignOutMutation();
+	const { data: usersResponse = [], isLoading: isUsersLoading } = useGetAdminUsersQuery();
+	const [createAdminUser, { isLoading: isCreatingUser }] = useCreateAdminUserMutation();
+	const [deleteAdminUser] = useDeleteAdminUserMutation();
 	const { clearAuthData } = useUserActions();
-
-	const offices = useMemo(() => {
-		const unique = new Set<string>();
-		users.forEach((user) => unique.add(user.office));
-		return ["all", ...Array.from(unique)];
-	}, [users]);
+	const users = useMemo<UserRow[]>(
+		() =>
+			usersResponse.map((user) => ({
+				id: user.id,
+				fullName: user.full_name,
+				login: user.login,
+				status: user.is_active ? "active" : "blocked",
+			})),
+		[usersResponse],
+	);
 
 	const filteredUsers = useMemo(() => {
 		return users.filter((user) => {
@@ -123,13 +77,11 @@ const UsersPage = memo(() => {
 			const matchesSearch =
 				!normalizedSearch ||
 				user.fullName.toLowerCase().includes(normalizedSearch) ||
-				user.login.toLowerCase().includes(normalizedSearch) ||
-				`${user.login}@rtk.local`.toLowerCase().includes(normalizedSearch);
+				user.login.toLowerCase().includes(normalizedSearch);
 			const matchesStatus = statusFilter === "all" || user.status === statusFilter;
-			const matchesOffice = officeFilter === "all" || user.office === officeFilter;
-			return matchesSearch && matchesStatus && matchesOffice;
+			return matchesSearch && matchesStatus;
 		});
-	}, [users, search, statusFilter, officeFilter]);
+	}, [users, search, statusFilter]);
 
 	const onLogout = () => {
 		signOut(undefined)
@@ -142,29 +94,34 @@ const UsersPage = memo(() => {
 			});
 	};
 
-	const onCreateUser = () => {
+	const onCreateUser = async () => {
 		if (!newUser.fullName.trim() || !newUser.login.trim() || !newUser.password.trim()) {
 			return;
 		}
 
-		const createdUser: UserRow = {
-			fullName: newUser.fullName.trim(),
-			login: newUser.login.trim(),
-			role: "Сотрудник",
-			office: "Москва",
-			status: "active",
-			lastLogin: "—",
-			lastPass: "—",
-			passesToday: 0,
-		};
+		try {
+			await createAdminUser({
+				full_name: newUser.fullName.trim(),
+				login: newUser.login.trim(),
+				password: newUser.password.trim(),
+			}).unwrap();
+			setNewUser({
+				fullName: "",
+				login: "",
+				password: "",
+			});
+			setIsCreateOpen(false);
+		} catch (e) {
+			// Ошибку возвращает backend, оставляем форму открытой для исправления данных.
+		}
+	};
 
-		setUsers((prev) => [createdUser, ...prev]);
-		setNewUser({
-			fullName: "",
-			login: "",
-			password: "",
-		});
-		setIsCreateOpen(false);
+	const onDeleteUser = async (userId: number) => {
+		try {
+			await deleteAdminUser(userId).unwrap();
+		} catch (e) {
+			// NOP
+		}
 	};
 
 	return (
@@ -250,21 +207,9 @@ const UsersPage = memo(() => {
 								type="button"
 								onClick={() => {
 									setIsStatusOpen((prev) => !prev);
-									setIsOfficeOpen(false);
 								}}
 							>
 								{statusFilter === "all" ? "Все статусы" : statusFilter === "active" ? "Активен" : "Заблокирован"}
-								<span className={classes.usersPage__chevron} />
-							</button>
-							<button
-								className={classes.usersPage__filterButton}
-								type="button"
-								onClick={() => {
-									setIsOfficeOpen((prev) => !prev);
-									setIsStatusOpen(false);
-								}}
-							>
-								{officeFilter === "all" ? "Все офисы" : officeFilter}
 								<span className={classes.usersPage__chevron} />
 							</button>
 							{isStatusOpen ? (
@@ -298,22 +243,6 @@ const UsersPage = memo(() => {
 									</button>
 								</div>
 							) : null}
-							{isOfficeOpen ? (
-								<div className={`${classes.usersPage__dropdown} ${classes["usersPage__dropdown--office"]}`}>
-									{offices.map((office) => (
-										<button
-											key={office}
-											type="button"
-											onClick={() => {
-												setOfficeFilter(office);
-												setIsOfficeOpen(false);
-											}}
-										>
-											{office === "all" ? "Все офисы" : office}
-										</button>
-									))}
-								</div>
-							) : null}
 						</div>
 
 						<div className={classes.usersPage__tableWrap}>
@@ -327,11 +256,9 @@ const UsersPage = memo(() => {
 								</thead>
 								<tbody>
 									{filteredUsers.map((user) => (
-										<tr key={user.login}>
+										<tr key={user.id}>
 											<td>{user.fullName}</td>
 											<td className={classes.usersPage__muted}>{user.login}</td>
-											<td className={classes.usersPage__muted}>{user.role}</td>
-											<td className={classes.usersPage__muted}>{user.office}</td>
 											<td>
 												<span
 													className={`${classes.usersPage__status} ${
@@ -344,14 +271,27 @@ const UsersPage = memo(() => {
 													{user.status === "active" ? "Активен" : "Заблокирован"}
 												</span>
 											</td>
-											<td className={classes.usersPage__muted}>{user.lastLogin}</td>
-											<td className={classes.usersPage__muted}>{user.lastPass}</td>
-											<td>{user.passesToday}</td>
+											<td>
+												<button
+													type="button"
+													className={classes.usersPage__deleteButton}
+													onClick={() => onDeleteUser(user.id)}
+												>
+													Удалить
+												</button>
+											</td>
 										</tr>
 									))}
+									{isUsersLoading ? (
+										<tr>
+											<td colSpan={4} className={classes.usersPage__empty}>
+												Загрузка пользователей...
+											</td>
+										</tr>
+									) : null}
 									{filteredUsers.length === 0 ? (
 										<tr>
-											<td colSpan={8} className={classes.usersPage__empty}>
+											<td colSpan={4} className={classes.usersPage__empty}>
 												Нет пользователей по выбранным фильтрам
 											</td>
 										</tr>
@@ -389,7 +329,7 @@ const UsersPage = memo(() => {
 							<button type="button" onClick={() => setIsCreateOpen(false)}>
 								Отмена
 							</button>
-							<button type="button" onClick={onCreateUser}>
+							<button type="button" onClick={onCreateUser} disabled={isCreatingUser}>
 								Создать
 							</button>
 						</div>

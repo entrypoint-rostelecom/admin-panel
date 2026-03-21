@@ -93,5 +93,6 @@ const baseQueryWithAuthHandling: BaseQueryFn<string | FetchArgs, unknown, FetchB
 export const rtkApi = createApi({
 	reducerPath: "api",
 	baseQuery: baseQueryWithAuthHandling,
+	tagTypes: ["AdminUsers"],
 	endpoints: (build) => ({}),
 });

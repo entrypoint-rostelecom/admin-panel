@@ -6,7 +6,7 @@ import classes from "./RegisterPage.module.css";
 
 const RegisterPage = () => {
 	const [authData, setAuthData] = useState<SignInDto>({
-		email: "",
+		login: "",
 		password: "",
 	});
 	const [error, setError] = useState<string>("");
@@ -16,13 +16,13 @@ const RegisterPage = () => {
 	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!authData.email.trim() || !authData.password.trim()) {
-			setError("Введите email и пароль");
+		if (!authData.login.trim() || !authData.password.trim()) {
+			setError("Введите логин и пароль");
 			return;
 		}
 
 		setError("");
-		const username = authData.email.split("@")[0] || "user";
+		const username = authData.login;
 		setAccessToken("mock-token");
 		setAuthDataRedux({
 			id: "mock-user-id",
@@ -40,9 +40,9 @@ const RegisterPage = () => {
 			<form onSubmit={onSubmit}>
 				<input
 					className={classes.field}
-					placeholder="Email"
-					value={authData.email}
-					onChange={(e) => setAuthData((prev) => ({ ...prev, email: e.target.value }))}
+					placeholder="Логин"
+					value={authData.login}
+					onChange={(e) => setAuthData((prev) => ({ ...prev, login: e.target.value }))}
 				/>
 				<input
 					className={classes.field}

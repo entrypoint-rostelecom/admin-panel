@@ -1,4 +1,4 @@
-import { SignInDto, UserRoles, setAccessToken, useUserActions } from "@/entities/User";
+import { SignInDto, setAccessToken, useAdminSignInMutation, useUserActions } from "@/entities/User";
 import { getRouteUsers } from "@/shared/consts/router";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,30 +6,31 @@ import classes from "./LoginPage.module.css";
 
 const LoginPage = () => {
 	const [authData, setAuthData] = useState<SignInDto>({
-		email: "",
+		login: "",
 		password: "",
 	});
 	const [error, setError] = useState<string>("");
 	const nav = useNavigate();
 	const { setAuthData: setAuthDataRedux } = useUserActions();
+	const [adminSignIn, { isLoading }] = useAdminSignInMutation();
 
-	const onSubmit = (e: React.FormEvent) => {
+	const onSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!authData.email.trim() || !authData.password.trim()) {
-			setError("Заполните email и пароль");
+		if (!authData.login.trim() || !authData.password.trim()) {
+			setError("Заполните логин и пароль");
 			return;
 		}
 
 		setError("");
-		const username = authData.email.split("@")[0] || "user";
-		setAccessToken("mock-token");
-		setAuthDataRedux({
-			id: "mock-user-id",
-			username,
-			roles: [UserRoles.ADMIN],
-		});
-		nav(getRouteUsers());
+		try {
+			const response = await adminSignIn(authData).unwrap();
+			setAccessToken(response.accessToken);
+			setAuthDataRedux(response);
+			nav(getRouteUsers());
+		} catch (e) {
+			setError("Неверный логин или пароль");
+		}
 	};
 
 	return (
@@ -40,9 +41,9 @@ const LoginPage = () => {
 			<form onSubmit={onSubmit}>
 				<input
 					className={classes.field}
-					placeholder="Email"
-					value={authData.email}
-					onChange={(e) => setAuthData((prev) => ({ ...prev, email: e.target.value }))}
+					placeholder="Логин"
+					value={authData.login}
+					onChange={(e) => setAuthData((prev) => ({ ...prev, login: e.target.value }))}
 				/>
 				<input
 					className={classes.field}
@@ -51,7 +52,7 @@ const LoginPage = () => {
 					value={authData.password}
 					onChange={(e) => setAuthData((prev) => ({ ...prev, password: e.target.value }))}
 				/>
-				<button type="submit" className={classes.button}>
+				<button type="submit" className={classes.button} disabled={isLoading}>
 					Войти
 				</button>
 			</form>

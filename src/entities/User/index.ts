@@ -1,4 +1,12 @@
-export { useRegisterMutation, useSignInMutation, useSignOutMutation } from "./api/userApi";
+export {
+	useRegisterMutation,
+	useSignInMutation,
+	useAdminSignInMutation,
+	useGetAdminUsersQuery,
+	useCreateAdminUserMutation,
+	useDeleteAdminUserMutation,
+	useSignOutMutation,
+} from "./api/userApi";
 export type { SignInDto } from "./model/types/dto/SignInDto";
 export { UserActions, UserReducer, useUserActions } from "./model/slice/userSlice";
 export type { User, UserSchema } from "./model/types/User";
