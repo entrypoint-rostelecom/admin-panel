@@ -417,7 +417,7 @@
 .usersPage__actions {
 	display: flex;
 	gap: 8px;
-	justify-content: flex-end;
+	justify-content: flex-start;
 }
 
 .usersPage__freezeButton {
