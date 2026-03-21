@@ -18,6 +18,7 @@ import {
 	getRouteSystemSettings,
 	getRouteUsers,
 } from "@/shared/consts/router";
+import { exportToCsv } from "@/shared/lib/exportToCsv/exportToCsv";
 import classes from "./SecurityLogsPage.module.css";
 
 const NAV_ITEMS = [
@@ -133,6 +134,17 @@ const SecurityLogsPage = memo(() => {
 			});
 	};
 
+	const onExport = () => {
+		exportToCsv("security_logs", tableData, [
+			{ key: "time", label: "Время" },
+			{ key: "admin", label: "Администратор" },
+			{ key: "action", label: "Действие" },
+			{ key: "typeText", label: "Тип" },
+			{ key: "details", label: "Детали" },
+			{ key: "ip", label: "Номер сканера" },
+		]);
+	};
+
 	return (
 		<Page>
 			<div className={classes.page}>
@@ -206,7 +218,7 @@ const SecurityLogsPage = memo(() => {
 									<h1 className={classes.title}>Логи безопасности</h1>
 									<p className={classes.subtitle}>Журнал системных событий и действий администраторов</p>
 								</div>
-								<button className={classes.exportBtn}>
+								<button className={classes.exportBtn} onClick={onExport} disabled={tableData.length === 0}>
 									<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 									Экспорт отчёта
 								</button>

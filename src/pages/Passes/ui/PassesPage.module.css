@@ -235,15 +235,30 @@
 }
 
 .passesPage__exportButton {
-	height: 36px;
-	padding: 0 14px;
-	border: 1px solid rgb(0 0 0 / 10%);
-	border-radius: 14px;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 40px;
+	padding: 0 16px;
+	border: 1px solid #d0d5dd;
+	border-radius: 12px;
 	background: #fff;
-	color: #1a1a1a;
+	color: #344054;
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 600;
 	cursor: pointer;
+	transition: all 0.2s;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.passesPage__exportButton:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.passesPage__exportButton:hover:not(:disabled) {
+	background: #f9fafb;
+	border-color: #d0d5dd;
 }
 
 .passesPage__filters {

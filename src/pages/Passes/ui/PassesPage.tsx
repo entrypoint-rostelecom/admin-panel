@@ -9,10 +9,15 @@ import {
 	getRouteSystemSettings,
 	getRouteUsers,
 } from "@/shared/consts/router";
-import { memo, useState } from "react";
+import { 
+	useGetAdminUsersQuery, 
+	useGetAccessLogsQuery 
+} from "@/entities/User";
+import { memo, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppButton } from "@/shared/ui";
 import { Page } from "@/widgets/Page";
+import { exportToCsv } from "@/shared/lib/exportToCsv/exportToCsv";
 import classes from "./PassesPage.module.css";
 
 type PassResult = "allowed" | "denied";
@@ -37,54 +42,6 @@ const NAV_ITEMS = [
 
 const TABLE_HEAD = ["Время события", "Пользователь", "Логин", "Сканер", "Результат", "Причина отказа", "Устройство"];
 
-const PASS_ROWS: PassRow[] = [
-	{
-		eventTime: "20.03.2026 14:32:15",
-		userName: "Петров И.А.",
-		login: "i.petrov",
-		scanner: "Вход 1",
-		result: "allowed",
-		reason: "—",
-		device: "iPhone 14 Pro",
-	},
-	{
-		eventTime: "20.03.2026 14:28:42",
-		userName: "Сидорова М.В.",
-		login: "m.sidorova",
-		scanner: "Вход 2",
-		result: "denied",
-		reason: "QR-код истёк",
-		device: "Samsung Galaxy S23",
-	},
-	{
-		eventTime: "20.03.2026 14:25:30",
-		userName: "Иванов С.П.",
-		login: "s.ivanov",
-		scanner: "Вход 1",
-		result: "allowed",
-		reason: "—",
-		device: "iPhone 15",
-	},
-	{
-		eventTime: "20.03.2026 14:22:17",
-		userName: "Козлова Е.Д.",
-		login: "e.kozlova",
-		scanner: "Вход 3",
-		result: "denied",
-		reason: "Нет доступа к офису",
-		device: "iPhone 13",
-	},
-	{
-		eventTime: "20.03.2026 14:18:03",
-		userName: "Морозов А.К.",
-		login: "a.morozov",
-		scanner: "Вход 1",
-		result: "allowed",
-		reason: "—",
-		device: "Pixel 8",
-	},
-];
-
 const PassesPage = memo(() => {
 	const [search, setSearch] = useState("");
 	const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -104,23 +61,66 @@ const PassesPage = memo(() => {
 			});
 	};
 
+	const { data: users = [] } = useGetAdminUsersQuery();
+	const { data: logs = [], isLoading: isLogsLoading } = useGetAccessLogsQuery();
+
 	const [scannerFilter, setScannerFilter] = useState("Все сканеры");
 	const [resultFilter, setResultFilter] = useState("Все результаты");
 
-	const filteredRows = PASS_ROWS.filter((row) => {
-		const normalizedSearch = search.trim().toLowerCase();
-		const matchesSearch = !normalizedSearch ||
-			row.userName.toLowerCase().includes(normalizedSearch) ||
-			row.login.toLowerCase().includes(normalizedSearch) ||
-			row.scanner.toLowerCase().includes(normalizedSearch);
-		
-		const matchesScanner = scannerFilter === "Все сканеры" || row.scanner === scannerFilter;
-		const matchesResult = resultFilter === "Все результаты" || 
-			(resultFilter === "Разрешён" && row.result === "allowed") || 
-			(resultFilter === "Запрещён" && row.result === "denied");
+	const tableData = useMemo(() => {
+		return logs.map((log) => {
+			const user = users.find(u => u.id === log.user_id);
+			const userName = user ? user.full_name : `ID ${log.user_id}`;
+			const login = user ? user.login : "-";
+			
+			const date = new Date(log.timestamp);
+			const timeStr = isNaN(date.getTime()) 
+				? log.timestamp 
+				: date.toLocaleString('ru-RU', {
+					day: '2-digit', month: '2-digit', year: 'numeric',
+					hour: '2-digit', minute: '2-digit', second: '2-digit'
+				}).replace(',', '');
 
-		return matchesSearch && matchesScanner && matchesResult;
-	});
+			return {
+				eventTime: timeStr,
+				userName,
+				login,
+				scanner: `Вход ${log.scanner_id}`,
+				result: (log.result?.toLowerCase().includes("granted") || log.result?.toLowerCase().includes("success")) ? "allowed" : "denied",
+				reason: log.reason || "—",
+				device: "—" // AccessLog does not have device field
+			};
+		});
+	}, [logs, users]);
+
+	const filteredRows = useMemo(() => {
+		return tableData.filter((row) => {
+			const normalizedSearch = search.trim().toLowerCase();
+			const matchesSearch = !normalizedSearch ||
+				row.userName.toLowerCase().includes(normalizedSearch) ||
+				row.login.toLowerCase().includes(normalizedSearch) ||
+				row.scanner.toLowerCase().includes(normalizedSearch);
+			
+			const matchesScanner = scannerFilter === "Все сканеры" || row.scanner === scannerFilter;
+			const matchesResult = resultFilter === "Все результаты" || 
+				(resultFilter === "Разрешён" && row.result === "allowed") || 
+				(resultFilter === "Запрещён" && row.result === "denied");
+
+			return matchesSearch && matchesScanner && matchesResult;
+		});
+	}, [tableData, search, scannerFilter, resultFilter]);
+
+	const onExport = () => {
+		exportToCsv("passes", filteredRows, [
+			{ key: "eventTime", label: "Время события" },
+			{ key: "userName", label: "Пользователь" },
+			{ key: "login", label: "Логин" },
+			{ key: "scanner", label: "Сканер" },
+			{ key: "result", label: "Результат" },
+			{ key: "reason", label: "Причина отказа" },
+			{ key: "device", label: "Устройство" },
+		]);
+	};
 
 	return (
 		<Page>
@@ -183,9 +183,15 @@ const PassesPage = memo(() => {
 								<h1 className={classes.passesPage__title}>Проходы</h1>
 								<p className={classes.passesPage__subtitle}>Журнал всех событий доступа</p>
 							</div>
-							<AppButton className={classes.passesPage__exportButton} type="button" variant="secondary" iconPlaceholder>
+							<button 
+								className={classes.passesPage__exportButton} 
+								type="button" 
+								onClick={onExport} 
+								disabled={filteredRows.length === 0}
+							>
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 								Экспорт в CSV
-							</AppButton>
+							</button>
 						</div>
 
 						<div className={classes.passesPage__filters}>
@@ -205,9 +211,9 @@ const PassesPage = memo(() => {
 									onChange={(e) => setScannerFilter(e.target.value)}
 								>
 									<option>Все сканеры</option>
-									<option>Вход 1</option>
-									<option>Вход 2</option>
-									<option>Вход 3</option>
+									{Array.from(new Set(logs.map(l => `Вход ${l.scanner_id}`))).sort().map(s => (
+										<option key={s}>{s}</option>
+									))}
 								</select>
 							</div>
 							<div className={classes.passesPage__selectWrap}>
@@ -233,27 +239,37 @@ const PassesPage = memo(() => {
 									</tr>
 								</thead>
 								<tbody>
-									{filteredRows.map((row) => (
-										<tr key={`${row.eventTime}${row.login}`}>
-											<td>{row.eventTime}</td>
-											<td>{row.userName}</td>
-											<td className={classes.passesPage__muted}>{row.login}</td>
-											<td className={classes.passesPage__muted}>{row.scanner}</td>
-											<td>
-												<span
-													className={`${classes.passesPage__status} ${
-														row.result === "allowed"
-															? classes["passesPage__status--allowed"]
-															: classes["passesPage__status--denied"]
-													}`}
-												>
-													{row.result === "allowed" ? "Разрешён" : "Запрещён"}
-												</span>
-											</td>
-											<td className={classes.passesPage__muted}>{row.reason}</td>
-											<td className={classes.passesPage__muted}>{row.device}</td>
+									{isLogsLoading ? (
+										<tr>
+											<td colSpan={7} style={{textAlign: "center", padding: "32px", color: "#667085"}}>Загрузка данных...</td>
 										</tr>
-									))}
+									) : filteredRows.length > 0 ? (
+										filteredRows.map((row) => (
+											<tr key={`${row.eventTime}${row.login}`}>
+												<td>{row.eventTime}</td>
+												<td>{row.userName}</td>
+												<td className={classes.passesPage__muted}>{row.login}</td>
+												<td className={classes.passesPage__muted}>{row.scanner}</td>
+												<td>
+													<span
+														className={`${classes.passesPage__status} ${
+															row.result === "allowed"
+																? classes["passesPage__status--allowed"]
+																: classes["passesPage__status--denied"]
+														}`}
+													>
+														{row.result === "allowed" ? "Разрешён" : "Запрещён"}
+													</span>
+												</td>
+												<td className={classes.passesPage__muted}>{row.reason}</td>
+												<td className={classes.passesPage__muted}>{row.device}</td>
+											</tr>
+										))
+									) : (
+										<tr>
+											<td colSpan={7} style={{textAlign: "center", padding: "32px", color: "#667085"}}>События не найдены</td>
+										</tr>
+									)}
 								</tbody>
 							</table>
 						</div>
