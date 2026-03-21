@@ -83,6 +83,14 @@ const userApi = rtkApi.injectEndpoints({
 			invalidatesTags: ["AdminUsers"],
 		}),
 
+		unfreezeAdminUser: build.mutation<AdminUser, number>({
+			query: (userId) => ({
+				url: `/api/v1/admin/users/${userId}/unfreeze`,
+				method: "PATCH",
+			}),
+			invalidatesTags: ["AdminUsers"],
+		}),
+
 		getAccessLogs: build.query<AccessLog[], void>({
 			query: () => "/api/v1/admin/logs",
 			providesTags: ["AccessLogs"],
@@ -103,6 +111,7 @@ export const {
 	useCreateAdminUserMutation,
 	useDeleteAdminUserMutation,
 	useFreezeAdminUserMutation,
+	useUnfreezeAdminUserMutation,
 	useGetAccessLogsQuery,
 	useAdminLogoutMutation,
 } = userApi;

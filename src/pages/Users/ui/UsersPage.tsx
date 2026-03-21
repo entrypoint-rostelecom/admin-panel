@@ -3,6 +3,7 @@ import {
 	useCreateAdminUserMutation,
 	useDeleteAdminUserMutation,
 	useFreezeAdminUserMutation,
+	useUnfreezeAdminUserMutation,
 	useGetAdminUsersQuery,
 	useAdminLogoutMutation,
 	useUserActions,
@@ -64,6 +65,7 @@ const UsersPage = memo(() => {
 	const [createAdminUser, { isLoading: isCreatingUser }] = useCreateAdminUserMutation();
 	const [deleteAdminUser] = useDeleteAdminUserMutation();
 	const [freezeAdminUser] = useFreezeAdminUserMutation();
+	const [unfreezeAdminUser] = useUnfreezeAdminUserMutation();
 	const { clearAuthData } = useUserActions();
 	const users = useMemo<UserRow[]>(
 		() =>
@@ -144,6 +146,14 @@ const UsersPage = memo(() => {
 	const onFreezeUser = async (userId: number) => {
 		try {
 			await freezeAdminUser(userId).unwrap();
+		} catch (e) {
+			// NOP
+		}
+	};
+
+	const onUnfreezeUser = async (userId: number) => {
+		try {
+			await unfreezeAdminUser(userId).unwrap();
 		} catch (e) {
 			// NOP
 		}
@@ -306,6 +316,15 @@ const UsersPage = memo(() => {
 															onClick={() => onFreezeUser(user.id)}
 														>
 															{t("users.action.freeze")}
+														</button>
+													) : null}
+													{user.status === "blocked" ? (
+														<button
+															type="button"
+															className={classes.usersPage__unfreezeButton}
+															onClick={() => onUnfreezeUser(user.id)}
+														>
+															{t("users.action.unfreeze")}
 														</button>
 													) : null}
 													<button

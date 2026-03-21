@@ -4,6 +4,7 @@ export {
 	useCreateAdminUserMutation,
 	useDeleteAdminUserMutation,
 	useFreezeAdminUserMutation,
+	useUnfreezeAdminUserMutation,
 	useGetAccessLogsQuery,
 	useAdminLogoutMutation,
 } from "./api/userApi";
