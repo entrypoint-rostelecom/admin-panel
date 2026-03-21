@@ -227,7 +227,7 @@ const UsersPage = memo(() => {
 
 						<div className={classes.usersPage__filters}>
 							<div className={classes.usersPage__search}>
-								<span className={classes.usersPage__searchIcon} />
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667085" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 								<input
 									className={classes.usersPage__searchInput}
 									placeholder={t("users.search.placeholder")}
@@ -235,47 +235,18 @@ const UsersPage = memo(() => {
 									onChange={(event) => setSearch(event.target.value)}
 								/>
 							</div>
-							<button
-								className={classes.usersPage__filterButton}
-								type="button"
-								onClick={() => {
-									setIsStatusOpen((prev) => !prev);
-								}}
-							>
-								{statusFilter === "all" ? t("users.filter.all") : statusFilter === "active" ? t("users.filter.active") : t("users.filter.blocked")}
-								<span className={classes.usersPage__chevron} />
-							</button>
-							{isStatusOpen ? (
-								<div className={classes.usersPage__dropdown}>
-									<button
-										type="button"
-										onClick={() => {
-											setStatusFilter("all");
-											setIsStatusOpen(false);
-										}}
-									>
-										{t("users.filter.all")}
-									</button>
-									<button
-										type="button"
-										onClick={() => {
-											setStatusFilter("active");
-											setIsStatusOpen(false);
-										}}
-									>
-										{t("users.filter.active")}
-									</button>
-									<button
-										type="button"
-										onClick={() => {
-											setStatusFilter("blocked");
-											setIsStatusOpen(false);
-										}}
-									>
-										{t("users.filter.blocked")}
-									</button>
-								</div>
-							) : null}
+
+							<div className={classes.usersPage__selectWrap}>
+								<select
+									className={classes.usersPage__filterSelect}
+									value={statusFilter}
+									onChange={(e) => setStatusFilter(e.target.value as any)}
+								>
+									<option value="all">{t("users.filter.all")}</option>
+									<option value="active">{t("users.filter.active")}</option>
+									<option value="blocked">{t("users.filter.blocked")}</option>
+								</select>
+							</div>
 						</div>
 
 						<div className={classes.usersPage__tableWrap}>

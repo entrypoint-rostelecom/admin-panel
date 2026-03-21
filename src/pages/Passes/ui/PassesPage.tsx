@@ -104,17 +104,22 @@ const PassesPage = memo(() => {
 			});
 	};
 
+	const [scannerFilter, setScannerFilter] = useState("Все сканеры");
+	const [resultFilter, setResultFilter] = useState("Все результаты");
+
 	const filteredRows = PASS_ROWS.filter((row) => {
 		const normalizedSearch = search.trim().toLowerCase();
-		if (!normalizedSearch) {
-			return true;
-		}
-
-		return (
+		const matchesSearch = !normalizedSearch ||
 			row.userName.toLowerCase().includes(normalizedSearch) ||
 			row.login.toLowerCase().includes(normalizedSearch) ||
-			row.scanner.toLowerCase().includes(normalizedSearch)
-		);
+			row.scanner.toLowerCase().includes(normalizedSearch);
+		
+		const matchesScanner = scannerFilter === "Все сканеры" || row.scanner === scannerFilter;
+		const matchesResult = resultFilter === "Все результаты" || 
+			(resultFilter === "Разрешён" && row.result === "allowed") || 
+			(resultFilter === "Запрещён" && row.result === "denied");
+
+		return matchesSearch && matchesScanner && matchesResult;
 	});
 
 	return (
@@ -185,6 +190,7 @@ const PassesPage = memo(() => {
 
 						<div className={classes.passesPage__filters}>
 							<div className={classes.passesPage__search}>
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#667085" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 								<input
 									className={classes.passesPage__searchInput}
 									placeholder="Поиск по ФИО или логину..."
@@ -192,13 +198,29 @@ const PassesPage = memo(() => {
 									onChange={(event) => setSearch(event.target.value)}
 								/>
 							</div>
-							<AppButton className={classes.passesPage__filterButton} type="button" variant="filter" iconPlaceholder>
-								Все сканеры
-							</AppButton>
-							<AppButton className={classes.passesPage__filterButton} type="button" variant="filter" iconPlaceholder>
-								Все результаты
-							</AppButton>
-							<div className={classes.passesPage__dateRange} />
+							<div className={classes.passesPage__selectWrap}>
+								<select 
+									className={classes.passesPage__filterSelect}
+									value={scannerFilter}
+									onChange={(e) => setScannerFilter(e.target.value)}
+								>
+									<option>Все сканеры</option>
+									<option>Вход 1</option>
+									<option>Вход 2</option>
+									<option>Вход 3</option>
+								</select>
+							</div>
+							<div className={classes.passesPage__selectWrap}>
+								<select 
+									className={classes.passesPage__filterSelect}
+									value={resultFilter}
+									onChange={(e) => setResultFilter(e.target.value)}
+								>
+									<option>Все результаты</option>
+									<option>Разрешён</option>
+									<option>Запрещён</option>
+								</select>
+							</div>
 						</div>
 
 						<div className={classes.passesPage__tableWrap}>
