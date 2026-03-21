@@ -275,7 +275,7 @@ const UsersPage = memo(() => {
 										<tr key={user.id}>
 											<td>{user.fullName}</td>
 											<td className={classes.usersPage__muted}>{user.login}</td>
-											<td className={classes.usersPage__muted} style={{ fontWeight: 600 }}>{user.passesToday > 0 ? `+${user.passesToday}` : "0"}</td>
+											<td className={classes.usersPage__muted} style={{ fontWeight: 600 }}>{user.passesToday}</td>
 											<td>
 												<span
 													className={`${classes.usersPage__status} ${
