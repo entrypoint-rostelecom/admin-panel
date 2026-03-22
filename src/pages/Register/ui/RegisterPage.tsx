@@ -3,6 +3,8 @@ import { getRouteLogin, getRouteUsers } from "@/shared/consts/router";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher";
+import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 import classes from "./RegisterPage.module.css";
 
 const RegisterPage = () => {
@@ -36,6 +38,10 @@ const RegisterPage = () => {
 
 	return (
 		<div className={classes.root}>
+			<div className={classes.floatingControls}>
+				<ThemeSwitcher />
+				<LanguageSwitcher />
+			</div>
 			<div className={classes.card}>
 				<div className={classes.logoContainer}>
 					<img 

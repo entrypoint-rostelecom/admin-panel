@@ -20,6 +20,7 @@ import { Page } from "@/widgets/Page";
 import { exportToCsv } from "@/shared/lib/exportToCsv/exportToCsv";
 import classes from "./PassesPage.module.css";
 import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher";
 import { useTranslation } from "react-i18next";
 
 type PassResult = "allowed" | "denied";
@@ -140,6 +141,7 @@ const PassesPage = memo(() => {
 					</div>
 
 					<div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+						<ThemeSwitcher />
 						<LanguageSwitcher />
 						<button className={classes.passesPage__profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 							<span className={classes.passesPage__profileInfo}>

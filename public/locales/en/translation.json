@@ -102,6 +102,8 @@
 			}
 		}
 	},
+	"theme_light": "Light",
+	"theme_dark": "Dark",
 	"dashboard": {
 		"title": "Dashboard",
 		"subtitle": "Access Control System Overview",

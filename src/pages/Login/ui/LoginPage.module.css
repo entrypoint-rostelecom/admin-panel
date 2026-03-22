@@ -127,12 +127,17 @@
 
 .error {
 	margin-top: 16px;
-	color: #d92d20;
-	font-size: 14px;
-	background-color: #fef3f2;
-	padding: 12px;
-	border-radius: 10px;
-	border: 1px solid #fee4e2;
-	text-align: center;
+	background: var(--rt-bg-page);
+	background-size: cover;
+	background-position: center;
 }
 
+.floatingControls {
+	position: absolute;
+	top: 24px;
+	right: 24px;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	z-index: 10;
+}

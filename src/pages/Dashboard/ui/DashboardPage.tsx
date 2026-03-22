@@ -9,6 +9,7 @@ import {
 	useGetAccessLogsQuery,
 	getUserData
 } from "@/entities/User";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher";
 import {
 	getRouteDashboard,
 	getRouteDevices,
@@ -120,6 +121,7 @@ const DashboardPage = memo(() => {
 					</div>
 
 					<div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+						<ThemeSwitcher />
 						<LanguageSwitcher />
 						<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 							<span className={classes.profileInfo}>

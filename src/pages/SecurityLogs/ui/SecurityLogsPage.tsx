@@ -22,6 +22,7 @@ import {
 import { exportToCsv } from "@/shared/lib/exportToCsv/exportToCsv";
 import classes from "./SecurityLogsPage.module.css";
 import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher";
 import { useTranslation } from "react-i18next";
 
 const NAV_ITEMS = [
@@ -167,6 +168,7 @@ const SecurityLogsPage = memo(() => {
 
 					<div className={classes.topbarRight}>
 						<div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+							<ThemeSwitcher />
 							<LanguageSwitcher />
 							<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 								<span className={classes.profileInfo}>

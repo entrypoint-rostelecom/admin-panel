@@ -10,6 +10,7 @@ import {
 	useUserActions,
 	getUserData,
 } from "@/entities/User";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher";
 import {
 	getRouteDashboard,
 	getRouteDevices,
@@ -183,6 +184,7 @@ const UsersPage = memo(() => {
 					</div>
 
 					<div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+						<ThemeSwitcher />
 						<LanguageSwitcher />
 						<button className={classes.usersPage__profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 							<span className={classes.usersPage__profileInfo}>
