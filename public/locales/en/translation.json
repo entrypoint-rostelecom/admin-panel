@@ -14,7 +14,6 @@
 		"requests": "Requests",
 		"users": "Users",
 		"passes": "Passes",
-		"devices": "Devices",
 		"settings": "System Settings",
 		"logs": "Security Logs"
 	},
@@ -145,7 +144,6 @@
 			"scanner": "Scanner",
 			"result": "Result",
 			"reason": "Denial Reason",
-			"device": "Device",
 			"empty": "No passes match selected filters"
 		}
 	},
@@ -163,8 +161,7 @@
 		"stats": {
 			"total": "Total Events",
 			"allowed": "Allowed",
-			"denied": "Denied",
-			"scanners": "Total Scanners"
+			"denied": "Denied"
 		},
 		"table": {
 			"time": "Time",

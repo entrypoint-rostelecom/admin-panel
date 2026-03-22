@@ -1,7 +1,6 @@
 import { clearAccessToken, useAdminLogoutMutation, useUserActions } from "@/entities/User";
 import {
 	getRouteDashboard,
-	getRouteDevices,
 	getRouteMain,
 	getRoutePasses,
 	getRouteRequests,
@@ -20,7 +19,6 @@ const NAV_ITEMS = [
 	{ label: "Заявки", path: getRouteRequests() },
 	{ label: "Пользователи", path: getRouteUsers() },
 	{ label: "Проходы", path: getRoutePasses() },
-	{ label: "Устройства", path: getRouteDevices() },
 	{ label: "Настройка системы", path: getRouteSystemSettings() },
 	{ label: "Логи безопасности", path: getRouteSecurityLogs() },
 ];
