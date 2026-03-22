@@ -7,8 +7,8 @@ export const LanguageSwitcher = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const currentLang = (i18n.language || "ru").split('-')[0];
     const toggleLanguage = () => {
-        const currentLang = i18n.language || "ru";
         const newLang = currentLang === "ru" ? "en" : "ru";
         
         i18n.changeLanguage(newLang);
@@ -22,7 +22,7 @@ export const LanguageSwitcher = () => {
 
     return (
         <button className={classes.switcher} onClick={toggleLanguage} type="button">
-            {i18n.language === "ru" ? "EN" : "RU"}
+            {currentLang === "ru" ? "EN" : "RU"}
         </button>
     );
 };

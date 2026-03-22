@@ -6,7 +6,8 @@
 		"logout": "Logout",
 		"cancel": "Cancel",
 		"create": "Create",
-		"loading": "Loading..."
+		"loading": "Loading...",
+		"no_name": "No Name"
 	},
 	"sidebar": {
 		"dashboard": "Dashboard",
@@ -104,6 +105,7 @@
 	"dashboard": {
 		"title": "Dashboard",
 		"subtitle": "Access Control System Overview",
+		"role": "Administrator",
 		"kpi": {
 			"users": "Active Users This Month",
 			"blocked": "Total Blocked",
@@ -116,7 +118,12 @@
 			"time": "Time",
 			"location": "Location",
 			"result": "Result",
-			"reason": "Reason"
+			"reason": "Reason",
+			"scanner": "Scanner",
+			"allowed": "Allowed",
+			"denied": "Denied",
+			"loading": "Updating log...",
+			"empty": "No recent events"
 		}
 	},
 	"passes": {

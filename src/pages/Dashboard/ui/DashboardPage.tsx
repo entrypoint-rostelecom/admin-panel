@@ -86,8 +86,8 @@ const DashboardPage = memo(() => {
 			return {
 				user: name,
 				time: timeStr,
-				location: `Сканер #${log.scanner_id}`,
-				result: isSuccess ? "Разрешён" : "Запрещён",
+				location: `${t("dashboard.logs.scanner")} #${log.scanner_id}`,
+				result: isSuccess ? t("dashboard.logs.allowed") : t("dashboard.logs.denied"),
 				reason: log.reason || "—",
 				status: isSuccess ? "success" : "error"
 			};
@@ -123,8 +123,8 @@ const DashboardPage = memo(() => {
 						<LanguageSwitcher />
 						<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
 							<span className={classes.profileInfo}>
-								<span className={classes.profileName}>{getUserData()?.username || "Без имени"}</span>
-								<span className={classes.profileRole}>Администратор</span>
+								<span className={classes.profileName}>{getUserData()?.username || t("common.no_name")}</span>
+								<span className={classes.profileRole}>{t("dashboard.role")}</span>
 							</span>
 							<span className={classes.profileAvatar}>{(getUserData()?.username || "U")[0].toUpperCase()}</span>
 						</button>
@@ -237,7 +237,7 @@ const DashboardPage = memo(() => {
 										<tbody>
 											{isLogsLoading ? (
 												<tr>
-													<td colSpan={5} className={classes.tableMuted} style={{ textAlign: "center" }}>Обновление журнала...</td>
+													<td colSpan={5} className={classes.tableMuted} style={{ textAlign: "center" }}>{t("dashboard.logs.loading")}</td>
 												</tr>
 											) : recentEvents.length > 0 ? (
 												recentEvents.map((event, idx) => (
@@ -256,7 +256,7 @@ const DashboardPage = memo(() => {
 												))
 											) : (
 												<tr>
-													<td colSpan={5} className={classes.tableMuted} style={{ textAlign: "center" }}>Нет недавних событий</td>
+													<td colSpan={5} className={classes.tableMuted} style={{ textAlign: "center" }}>{t("dashboard.logs.empty")}</td>
 												</tr>
 											)}
 										</tbody>

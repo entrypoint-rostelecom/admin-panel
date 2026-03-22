@@ -14,7 +14,7 @@ export enum AppRoutes {
 	REGISTER = "register",
 }
 
-const getLangStr = () => `/ru`;
+const getLangStr = () => `/${i18n.language?.split('-')[0] || 'ru'}`;
 
 export const getRouteMain = () => `${getLangStr()}/`;
 export const getRouteDashboard = () => `${getLangStr()}/dashboard`;
