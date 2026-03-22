@@ -7,7 +7,11 @@
 		"cancel": "Cancel",
 		"create": "Create",
 		"loading": "Loading...",
-		"no_name": "No Name"
+		"no_name": "No Name",
+		"pagination": {
+			"previous": "< Previous",
+			"next": "Next >"
+		}
 	},
 	"sidebar": {
 		"dashboard": "Dashboard",

@@ -7,7 +7,11 @@
 		"cancel": "Отмена",
 		"create": "Создать",
 		"loading": "Загрузка...",
-		"no_name": "Без имени"
+		"no_name": "Без имени",
+		"pagination": {
+			"previous": "< Назад",
+			"next": "Вперед >"
+		}
 	},
 	"sidebar": {
 		"dashboard": "Дашборд",

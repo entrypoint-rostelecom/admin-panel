@@ -375,7 +375,7 @@ const SecurityLogsPage = memo(() => {
 											onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
 											disabled={currentPage === 1}
 										>
-											&lt; Previous
+											{t("common.pagination.previous")}
 										</button>
 										{Array.from({length: totalPages}, (_, i) => i + 1).map(page => (
 											<button 
@@ -391,7 +391,7 @@ const SecurityLogsPage = memo(() => {
 											onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
 											disabled={currentPage === totalPages}
 										>
-											Next &gt;
+											{t("common.pagination.next")}
 										</button>
 									</div>
 								)}
