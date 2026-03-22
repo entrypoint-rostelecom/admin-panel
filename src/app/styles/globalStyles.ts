@@ -100,6 +100,7 @@ export const GlobalStyles = createGlobalStyle`
     color: var(--rt-text-primary);
     background-color: var(--rt-bg-page);
     transition: background-color 0.2s ease, color 0.2s ease;
+    overflow-x: hidden;
   }
 `;
 

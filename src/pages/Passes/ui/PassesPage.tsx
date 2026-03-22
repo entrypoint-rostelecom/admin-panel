@@ -52,6 +52,8 @@ const PassesPage = memo(() => {
 	const [adminLogout] = useAdminLogoutMutation();
 	const { clearAuthData } = useUserActions();
 
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
 	const onLogout = () => {
 		adminLogout(undefined)
 			.unwrap()
@@ -131,6 +133,17 @@ const PassesPage = memo(() => {
 			<div className={classes.passesPage}>
 				<header className={classes.passesPage__topbar}>
 					<div className={classes.passesPage__brand}>
+						<button 
+							className={classes.passesPage__burger} 
+							type="button" 
+							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+						>
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+								<line x1="3" y1="12" x2="21" y2="12"></line>
+								<line x1="3" y1="6" x2="21" y2="6"></line>
+								<line x1="3" y1="18" x2="21" y2="18"></line>
+							</svg>
+						</button>
 						<div className={classes.passesPage__brandLogo}>Р</div>
 						<div className={classes.passesPage__brandText}>
 							<p className={classes.passesPage__brandTitle}>{t("common.app_name")}</p>
@@ -138,7 +151,7 @@ const PassesPage = memo(() => {
 						</div>
 					</div>
 
-					<div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+					<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
 						<ThemeSwitcher />
 						<LanguageSwitcher />
 						<button className={classes.passesPage__profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
@@ -159,7 +172,7 @@ const PassesPage = memo(() => {
 				</header>
 
 				<div className={classes.passesPage__layout}>
-					<aside className={classes.passesPage__sidebar}>
+					<aside className={`${classes.passesPage__sidebar} ${isMobileMenuOpen ? classes["passesPage__sidebar--open"] : ""}`}>
 						<nav className={classes.passesPage__nav}>
 							{NAV_ITEMS.map((item) => {
 								const isActive = location.pathname === item.path;

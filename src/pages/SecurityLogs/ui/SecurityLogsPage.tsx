@@ -128,6 +128,8 @@ const SecurityLogsPage = memo(() => {
 		};
 	}, [tableData, logs]);
 
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
 	const onLogout = () => {
 		adminLogout(undefined)
 			.unwrap()
@@ -157,6 +159,17 @@ const SecurityLogsPage = memo(() => {
 				{/* TOPBAR */}
 				<header className={classes.topbar}>
 					<div className={classes.brand}>
+						<button 
+							className={classes.burger} 
+							type="button" 
+							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+						>
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+								<line x1="3" y1="12" x2="21" y2="12"></line>
+								<line x1="3" y1="6" x2="21" y2="6"></line>
+								<line x1="3" y1="18" x2="21" y2="18"></line>
+							</svg>
+						</button>
 						<div className={classes.brandLogo}>Р</div>
 						<div className={classes.brandText}>
 							<p className={classes.brandTitle}>{t("common.app_name")}</p>
@@ -165,7 +178,7 @@ const SecurityLogsPage = memo(() => {
 					</div>
 
 					<div className={classes.topbarRight}>
-						<div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+						<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
 							<ThemeSwitcher />
 							<LanguageSwitcher />
 							<button className={classes.profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
@@ -192,7 +205,7 @@ const SecurityLogsPage = memo(() => {
 				<div className={classes.layout}>
 					
 					{/* SIDEBAR */}
-					<aside className={classes.sidebar}>
+					<aside className={`${classes.sidebar} ${isMobileMenuOpen ? classes["sidebar--open"] : ""}`}>
 						<nav className={classes.nav}>
 							{NAV_ITEMS.map((item) => {
 								const isActive = location.pathname === item.path;

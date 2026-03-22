@@ -168,10 +168,115 @@
 .typeBadgeGreen { color: var(--rt-badge-success-text); background: var(--rt-badge-success-bg); }
 
 /* PAGINATION */
-.pagination { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 16px 24px; background: var(--rt-bg-card); transition: background 0.2s; }
+.pagination { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 16px 24px; background: var(--rt-bg-card); transition: background 0.2s; flex-wrap: wrap; }
 .pageBtn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: none; background: transparent; color: var(--rt-text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .pageBtn:hover { background: var(--rt-nav-hover-bg); color: var(--rt-text-primary); }
 .pageBtnActive { background: var(--rt-nav-active-bg); color: var(--rt-nav-active-text); }
 .pageBtnText { padding: 0 12px; height: 36px; display: flex; align-items: center; border: none; background: transparent; color: var(--rt-text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .pageBtnText:hover { color: var(--rt-text-primary); }
 .pageEllipsis { color: var(--rt-text-muted); padding: 0 4px; }
+
+.burger {
+	display: none;
+	background: transparent;
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	padding: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+@media (max-width: 1024px) {
+	.burger {
+		display: flex;
+	}
+
+	.topbar {
+		padding: 0 16px;
+	}
+
+	.brandLogo {
+		width: 32px;
+		height: 32px;
+		font-size: 16px;
+		border-radius: 12px;
+	}
+
+	.brandSubtitle {
+		display: none;
+	}
+
+	.profileInfo {
+		display: none;
+	}
+
+	.layout {
+		grid-template-columns: 1fr;
+		position: relative;
+	}
+
+	.sidebar {
+		position: fixed;
+		left: -256px;
+		top: 64px;
+		bottom: 0;
+		width: 256px;
+		z-index: 10;
+		transition: left 0.3s ease;
+		box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+		min-height: auto;
+	}
+
+	.sidebar--open {
+		left: 0;
+	}
+
+	.contentBox {
+		padding: 24px 16px;
+	}
+
+	.title {
+		font-size: 24px;
+	}
+
+	.filtersBar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.selectsWrap {
+		flex-direction: column;
+	}
+
+	.statsGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.tableWrap {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.table {
+		min-width: 1000px;
+	}
+
+	.contentHeader {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.exportBtn {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+@media (max-width: 480px) {
+	.brandTitle {
+		font-size: 14px;
+	}
+}
+

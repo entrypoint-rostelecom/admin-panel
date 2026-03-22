@@ -12,6 +12,8 @@ import { memo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppButton } from "@/shared/ui";
 import { Page } from "@/widgets/Page";
+import { ThemeSwitcher } from "@/features/ThemeSwitcher";
+import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 import classes from "./SystemSettingsPage.module.css";
 
 const NAV_ITEMS = [
@@ -40,6 +42,8 @@ const SystemSettingsPage = memo(() => {
 	const [adminLogout] = useAdminLogoutMutation();
 	const { clearAuthData } = useUserActions();
 
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
 	const onLogout = () => {
 		adminLogout(undefined)
 			.unwrap()
@@ -56,6 +60,17 @@ const SystemSettingsPage = memo(() => {
 			<div className={classes.systemSettingsPage}>
 				<header className={classes.systemSettingsPage__topbar}>
 					<div className={classes.systemSettingsPage__brand}>
+						<button 
+							className={classes.systemSettingsPage__burger} 
+							type="button" 
+							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+						>
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+								<line x1="3" y1="12" x2="21" y2="12"></line>
+								<line x1="3" y1="6" x2="21" y2="6"></line>
+								<line x1="3" y1="18" x2="21" y2="18"></line>
+							</svg>
+						</button>
 						<div className={classes.systemSettingsPage__brandLogo}>Р</div>
 						<div className={classes.systemSettingsPage__brandText}>
 							<p className={classes.systemSettingsPage__brandTitle}>Точка входа</p>
@@ -63,13 +78,17 @@ const SystemSettingsPage = memo(() => {
 						</div>
 					</div>
 
-					<button className={classes.systemSettingsPage__profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
-						<span className={classes.systemSettingsPage__profileInfo}>
-							<span className={classes.systemSettingsPage__profileName}>Иванова А.С.</span>
-							<span className={classes.systemSettingsPage__profileRole}>Администратор</span>
-						</span>
-						<span className={classes.systemSettingsPage__profileAvatar}>AS</span>
-					</button>
+					<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+						<ThemeSwitcher />
+						<LanguageSwitcher />
+						<button className={classes.systemSettingsPage__profile} type="button" onClick={() => setIsProfileOpen((prev) => !prev)}>
+							<span className={classes.systemSettingsPage__profileInfo}>
+								<span className={classes.systemSettingsPage__profileName}>Иванова А.С.</span>
+								<span className={classes.systemSettingsPage__profileRole}>Администратор</span>
+							</span>
+							<span className={classes.systemSettingsPage__profileAvatar}>AS</span>
+						</button>
+					</div>
 					{isProfileOpen ? (
 						<div className={classes.systemSettingsPage__profileMenu}>
 							<button type="button" className={classes.systemSettingsPage__profileMenuButton} onClick={onLogout}>
@@ -80,7 +99,7 @@ const SystemSettingsPage = memo(() => {
 				</header>
 
 				<div className={classes.systemSettingsPage__layout}>
-					<aside className={classes.systemSettingsPage__sidebar}>
+					<aside className={`${classes.systemSettingsPage__sidebar} ${isMobileMenuOpen ? classes["systemSettingsPage__sidebar--open"] : ""}`}>
 						<nav className={classes.systemSettingsPage__nav}>
 							{NAV_ITEMS.map((item) => {
 								const isActive = location.pathname === item.path;

@@ -137,4 +137,97 @@
 .approveButton { padding: 6px 12px; border-radius: 8px; border: 0; background: #22c55e; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; }
 .rejectButton { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--rt-badge-error-border); background: var(--rt-badge-error-bg); color: var(--rt-badge-error-text); font-size: 13px; font-weight: 500; cursor: pointer; }
 
+.burger {
+	display: none;
+	background: transparent;
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	padding: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+@media (max-width: 1024px) {
+	.burger {
+		display: flex;
+	}
+
+	.topbar {
+		padding: 0 16px;
+	}
+
+	.brandLogo {
+		width: 32px;
+		height: 32px;
+		font-size: 16px;
+		border-radius: 12px;
+	}
+
+	.brandSubtitle {
+		display: none;
+	}
+
+	.profileInfo {
+		display: none;
+	}
+
+	.layout {
+		grid-template-columns: 1fr;
+		position: relative;
+	}
+
+	.sidebar {
+		position: fixed;
+		left: -256px;
+		top: 64px;
+		bottom: 0;
+		width: 256px;
+		z-index: 10;
+		transition: left 0.3s ease;
+		box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+		min-height: auto;
+	}
+
+	.sidebar--open {
+		left: 0;
+	}
+
+	.content {
+		padding: 24px 16px;
+	}
+
+	.title {
+		font-size: 24px;
+	}
+
+	.kpiGrid {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+
+	.tableWrap {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		margin: 0;
+		padding: 0;
+	}
+
+	.table {
+		min-width: 800px;
+	}
+
+	.panelHeader {
+		flex-direction: column;
+		gap: 12px;
+	}
+}
+
+@media (max-width: 480px) {
+	.brandTitle {
+		font-size: 14px;
+	}
+}
+
+
 
