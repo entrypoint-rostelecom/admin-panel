@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ThemeSwitcher } from "@/features/ThemeSwitcher";
 import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
+import { useAppSelector } from "@/shared/lib/hooks";
 import classes from "./RegisterPage.module.css";
 
 const RegisterPage = () => {
@@ -16,6 +17,12 @@ const RegisterPage = () => {
 	const [error, setError] = useState<string>("");
 	const nav = useNavigate();
 	const { setAuthData: setAuthDataRedux } = useUserActions();
+
+	const themeType = useAppSelector((state) => state.ui.themeStyles.type);
+	const { i18n } = useTranslation();
+	const currentLang = (i18n.language || "ru").split("-")[0];
+
+	const logoSrc = `/assets/Image/RGB_RT_logo-vertical_${themeType === "dark" ? "black" : "main"}_${currentLang}.png`;
 
 	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -45,7 +52,7 @@ const RegisterPage = () => {
 			<div className={classes.card}>
 				<div className={classes.logoContainer}>
 					<img 
-						src="/assets/Image/RGB_RT_logo-horizontal_main_ru.png" 
+						src={logoSrc} 
 						alt={t("common.brand")} 
 						className={classes.logo} 
 					/>
