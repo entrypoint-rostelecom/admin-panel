@@ -1,19 +1,25 @@
 .root {
-	margin-top: 16px;
-	padding: 16px;
-	border: 1px solid #444;
-	border-radius: 8px;
+	margin: 0 auto;
+	margin-top: 64px;
+	padding: 32px;
+	border: 1px solid var(--rt-border);
+	border-radius: 16px;
 	max-width: 740px;
+	background: var(--rt-bg-card);
+	color: var(--rt-text-primary);
+	box-shadow: var(--rt-card-shadow);
 }
 
 .title {
-	margin: 0 0 12px;
+	margin: 0 0 16px;
+	font-size: 24px;
+	font-weight: 700;
 }
 
 .authSection {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 16px;
 }
 
 .actions {
@@ -23,19 +29,48 @@
 }
 
 .link {
-	color: #4c71f2;
+	color: var(--rt-accent);
 	text-decoration: none;
+	font-weight: 500;
 }
 
 .link:hover {
 	text-decoration: underline;
+	opacity: 0.8;
 }
 
 .button {
-	padding: 8px 14px;
-	border: 1px solid #444;
-	border-radius: 8px;
-	background: #fff;
+	padding: 8px 16px;
+	border: 1px solid var(--rt-btn-secondary-border);
+	border-radius: 12px;
+	background: var(--rt-btn-secondary-bg);
+	color: var(--rt-btn-secondary-text);
+	font-weight: 500;
 	cursor: pointer;
+	transition: opacity 0.2s;
+}
+
+.button:hover {
+	opacity: 0.8;
+}
+
+.floatingControls {
+	position: absolute;
+	top: 24px;
+	right: 24px;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	z-index: 10;
+}
+
+.logoContainer {
+	margin-bottom: 24px;
+	display: flex;
+}
+
+.logo {
+	max-height: 120px;
+	width: auto;
 }
 

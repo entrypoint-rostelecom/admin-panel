@@ -1,7 +1,7 @@
 .switcher {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: #fff;
+    background: var(--rt-bg-input, #fff);
+    border: 1px solid var(--rt-border, #d0d5dd);
+    color: var(--rt-text-primary, #101828);
     border-radius: 20px;
     padding: 5px 14px;
     font-size: 13px;
@@ -13,12 +13,11 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    backdrop-filter: blur(4px);
 }
 
 .switcher:hover {
-    background: rgba(255, 255, 255, 0.28);
-    border-color: rgba(255, 255, 255, 0.7);
+    background: var(--rt-border, #f2f4f7);
+    border-color: var(--rt-border-input, #d0d5dd);
     transform: scale(1.03);
 }
 

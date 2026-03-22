@@ -19,7 +19,7 @@
 		"logs": "Security Logs"
 	},
 	"login": {
-		"title": "Digital Pass",
+		"title": "Entry Point",
 		"label": {
 			"username": "Username:",
 			"password": "Password:"
