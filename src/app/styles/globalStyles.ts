@@ -51,15 +51,15 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   html[data-theme="dark"] {
-    --rt-bg-page: #111621;
-    --rt-bg-card: #151d2c;
+    --rt-bg-page: #0b0f1a;
+    --rt-bg-card: #111827;
     --rt-bg-sidebar: #0e1420;
-    --rt-bg-input: #1c2236;
+    --rt-bg-input: #1f2937;
     --rt-bg-topbar: #1e0a42;
     --rt-bg-topbar-shadow: 0 4px 12px 0 rgba(0,0,0,0.4), 0 1px 2px 0 rgba(0,0,0,0.3);
     --rt-bg-table-head: #131926;
-    --rt-text-primary: #e8e8f0;
-    --rt-text-secondary: #9ea2ad;
+    --rt-text-primary: #ffffff;
+    --rt-text-secondary: #9ca3af;
     --rt-text-muted: #6b7280;
     --rt-text-on-topbar: #ffffff;
     --rt-border: rgba(255, 255, 255, 0.07);

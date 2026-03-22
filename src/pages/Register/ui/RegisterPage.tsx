@@ -22,7 +22,7 @@ const RegisterPage = () => {
 	const { i18n } = useTranslation();
 	const currentLang = (i18n.language || "ru").split("-")[0];
 
-	const logoSrc = `/assets/Image/RGB_RT_logo-vertical_${themeType === "dark" ? "black" : "main"}_${currentLang}.png`;
+	const logoSrc = `/assets/Image/RGB_RT_logo-vertical_${themeType === "dark" ? "main" : "black"}_${currentLang}.png`;
 
 	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
