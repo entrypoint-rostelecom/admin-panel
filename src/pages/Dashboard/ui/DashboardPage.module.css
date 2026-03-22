@@ -114,7 +114,7 @@
 .kpiDesc { margin: 0; font-size: 14px; color: var(--rt-text-muted); line-height: 1.4; }
 
 /* BOTTOM GRID */
-.bottomGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.bottomGrid { display: grid; grid-template-columns: 1fr; gap: 24px; }
 .tablePanel { background: var(--rt-bg-card); border-radius: 16px; padding: 24px; border: 1px solid var(--rt-border); display: flex; flex-direction: column; gap: 20px; box-shadow: var(--rt-card-shadow); transition: background 0.2s; }
 .panelHeader { display: flex; justify-content: space-between; align-items: flex-start; }
 .panelTitle { margin: 0; font-size: 16px; font-weight: 600; }
