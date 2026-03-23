@@ -39,48 +39,45 @@ const MainPage = memo(() => {
 			</div>
 			
 			<div className={classes.root}>
-				<div className={classes.logoContainer}>
-					<img
-						src={logoSrc}
-						alt={t("common.brand")}
-						className={classes.logo}
-						onLoad={() => console.log("LOGO SUCCESS: Loaded from", logoSrc)}
-						onError={(e) => {
-							console.error("LOGO ERROR: Failed to load", logoSrc);
-							console.log("Current document.baseURI is", document.baseURI);
-						}}
-					/>
+				<div className={classes.card}>
+					<div className={classes.logoContainer}>
+						<img
+							src={logoSrc}
+							alt={t("common.brand")}
+							className={classes.logo}
+						/>
+					</div>
+
+					<h1 className={classes.title}>{t("main.title")}</h1>
+
+					{user ? (
+						<div className={classes.authSection}>
+							<div className={classes.userText}>
+								{t("main.logged_as")} <span className={classes.username}>{user.username}</span>
+							</div>
+							<div className={classes.actions}>
+								<Link to={getRouteUsers()} className={classes.link}>
+									{t("main.go_to_users")}
+								</Link>
+								<button type="button" onClick={onLogout} className={classes.button}>
+									{t("common.logout")}
+								</button>
+							</div>
+						</div>
+					) : (
+						<div className={classes.authSection}>
+							<p className={classes.userText}>{t("main.not_authorized")}</p>
+							<div className={classes.actions}>
+								<Link to={getRouteLogin()} className={classes.link}>
+									{t("main.login")}
+								</Link>
+								<Link to={getRouteRegister()} className={classes.button} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+									{t("main.register")}
+								</Link>
+							</div>
+						</div>
+					)}
 				</div>
-
-				<h1 className={classes.title}>Главная страница</h1>
-
-				{user ? (
-					<div className={classes.authSection}>
-						<p>
-							Вы вошли как: <strong>{user.username}</strong>
-						</p>
-						<div className={classes.actions}>
-							<Link to={getRouteUsers()} className={classes.link}>
-								Перейти к пользователям
-							</Link>
-							<button type="button" onClick={onLogout} className={classes.button}>
-								Выйти
-							</button>
-						</div>
-					</div>
-				) : (
-					<div className={classes.authSection}>
-						<p>Вы не авторизованы. Войдите, чтобы открыть страницу пользователей.</p>
-						<div className={classes.actions}>
-							<Link to={getRouteLogin()} className={classes.link}>
-								Войти
-							</Link>
-							<Link to={getRouteRegister()} className={classes.link}>
-								Зарегистрироваться
-							</Link>
-						</div>
-					</div>
-				)}
 			</div>
 		</Page>
 	);

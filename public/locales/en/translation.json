@@ -135,11 +135,18 @@
 		"title": "Passes",
 		"subtitle": "All Access Event Log",
 		"export": "Export CSV",
-		"search": "Search by user...",
+		"search": {
+			"placeholder": "Search by user..."
+		},
 		"filter": {
-			"all": "All Results",
-			"allowed": "Allowed",
-			"denied": "Denied"
+			"scanners": {
+				"all": "All Scanners"
+			},
+			"results": {
+				"all": "All Results",
+				"allowed": "Allowed",
+				"denied": "Denied"
+			}
 		},
 		"table": {
 			"time": "Event Time",
@@ -148,7 +155,9 @@
 			"scanner": "Scanner",
 			"result": "Result",
 			"reason": "Denial Reason",
-			"empty": "No passes match selected filters"
+			"device": "Device",
+			"empty": "No passes match selected filters",
+			"loading": "Loading passes..."
 		}
 	},
 	"logs": {
@@ -170,12 +179,30 @@
 		"table": {
 			"time": "Time",
 			"admin": "Administrator",
-			"action": "Action",
-			"type": "Type",
+			"action_label": "Action",
+			"type_label": "Type",
+			"action": {
+				"entrance": "System Entrance",
+				"attempt": "Login Attempt"
+			},
+			"type": {
+				"auth": "Authorization",
+				"denied": "Access Denied"
+			},
 			"details": "Details",
+			"reason": "Reason",
 			"scanner": "Scanner Number",
 			"empty": "No events found",
 			"loading": "Loading logs..."
 		}
+	},
+	"main": {
+		"title": "Main Page",
+		"welcome": "Welcome to the system!",
+		"logged_as": "Logged in as:",
+		"go_to_users": "Go to Admin Panel",
+		"not_authorized": "You are not authorized. Please log in to access the admin panel.",
+		"login": "Sign In",
+		"register": "Sign Up"
 	}
 }

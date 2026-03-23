@@ -1,57 +1,95 @@
 .root {
-	margin: 0 auto;
-	margin-top: 64px;
-	padding: 32px;
-	border: 1px solid var(--rt-border);
-	border-radius: 16px;
-	max-width: 740px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: var(--rt-bg-page);
+	font-family: 'RT Basis', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	padding: 20px;
+}
+
+.card {
 	background: var(--rt-bg-card);
-	color: var(--rt-text-primary);
+	padding: 48px;
+	border-radius: 16px;
 	box-shadow: var(--rt-card-shadow);
+	width: 100%;
+	max-width: 448px;
+	text-align: center;
+	border: 1px solid var(--rt-border);
+}
+
+.logoContainer {
+	margin-bottom: 40px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.logo {
+	max-height: 80px;
+	width: auto;
 }
 
 .title {
-	margin: 0 0 16px;
-	font-size: 24px;
+	font-size: 28px;
 	font-weight: 700;
+	color: var(--rt-text-primary);
+	margin-bottom: 32px;
+	line-height: 1.25;
+	letter-spacing: -0.02em;
 }
 
 .authSection {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 24px;
 }
 
 .actions {
 	display: flex;
+	flex-direction: column;
 	gap: 12px;
-	align-items: center;
 }
 
 .link {
-	color: var(--rt-accent);
+	width: 100%;
+	padding: 14px;
+	font-size: 16px;
+	font-weight: 600;
+	color: #fff;
+	background-color: var(--rt-accent);
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
 	text-decoration: none;
-	font-weight: 500;
+	transition: all 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
 }
 
 .link:hover {
-	text-decoration: underline;
-	opacity: 0.8;
+	opacity: 0.9;
 }
 
 .button {
-	padding: 8px 16px;
-	border: 1px solid var(--rt-btn-secondary-border);
+	width: 100%;
+	padding: 12px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--rt-text-secondary);
+	background-color: transparent;
+	border: 1px solid var(--rt-border);
 	border-radius: 12px;
-	background: var(--rt-btn-secondary-bg);
-	color: var(--rt-btn-secondary-text);
-	font-weight: 500;
 	cursor: pointer;
-	transition: opacity 0.2s;
+	transition: all 0.2s;
 }
 
 .button:hover {
-	opacity: 0.8;
+	background-color: var(--rt-bg-element);
+	color: var(--rt-text-primary);
 }
 
 .floatingControls {
@@ -64,41 +102,36 @@
 	z-index: 10;
 }
 
-.logoContainer {
-	margin-bottom: 24px;
-	display: flex;
+.userText {
+	font-size: 16px;
+	color: var(--rt-text-secondary);
+	margin-bottom: 8px;
 }
 
-.logo {
-	max-height: 120px;
-	width: auto;
+.username {
+	color: var(--rt-text-primary);
+	font-weight: 700;
 }
 
-@media (max-width: 768px) {
-	.root {
+@media (max-width: 600px) {
+	.card {
+		padding: 32px 20px;
 		margin: 16px;
-		margin-top: 80px;
-		padding: 24px 16px;
+		max-width: 100%;
 	}
 
-	.logo {
-		max-height: 80px;
+	.title {
+		font-size: 24px;
+		margin-bottom: 24px;
 	}
 
 	.floatingControls {
-		top: 16px;
-		right: 16px;
+		top: 12px;
+		right: 12px;
 		gap: 8px;
 	}
 
-	.actions {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	.button, .link {
-		text-align: center;
-		padding: 12px;
+	.logo {
+		max-height: 60px;
 	}
 }
-

@@ -1,94 +1,3 @@
-.page {
-	min-height: 100vh;
-	background: var(--rt-bg-page);
-	color: var(--rt-text-primary);
-	font-family: Inter, Arial, sans-serif;
-	display: flex;
-	flex-direction: column;
-	transition: background 0.2s, color 0.2s;
-}
-
-/* TOPBAR */
-.topbar {
-	display: flex; align-items: center; justify-content: space-between;
-	position: relative; height: 64px; padding: 0 24px;
-	background: var(--rt-bg-topbar);
-	box-shadow: var(--rt-bg-topbar-shadow);
-}
-
-.brand { display: flex; align-items: center; gap: 12px; }
-.brandLogo {
-	width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-	background: rgba(255,255,255,0.18); border-radius: 16px;
-	color: #fff; font-size: 20px; font-weight: 700; line-height: 1;
-}
-.brandText { display: flex; flex-direction: column; gap: 2px; }
-.brandTitle { margin: 0; color: #fff; font-size: 18px; font-weight: 700; line-height: 1; }
-.brandSubtitle { margin: 0; color: rgba(255,255,255,0.75); font-size: 12px; line-height: 1.3; }
-
-.topbarRight { position: relative; }
-.profile {
-	display: flex; align-items: center; gap: 12px;
-	height: 56px; padding: 0 12px;
-	border: 0; border-radius: 16px; background: transparent;
-	color: #fff; cursor: pointer;
-}
-.profileInfo { display: flex; flex-direction: column; align-items: flex-end; }
-.profileName { font-size: 14px; font-weight: 500; line-height: 1.4; }
-.profileRole { font-size: 12px; color: rgba(255,255,255,0.70); }
-.profileAvatar {
-	width: 40px; height: 40px; border-radius: 999px;
-	display: flex; align-items: center; justify-content: center;
-	background: rgba(255,255,255,0.20); color: #fff; font-size: 12px; font-weight: 600;
-}
-.profileMenu {
-	position: absolute; right: 0; top: 60px; z-index: 6;
-	background: var(--rt-dropdown-bg); border: 1px solid var(--rt-border);
-	border-radius: 12px; box-shadow: var(--rt-dropdown-shadow);
-}
-.profileMenuButton { border: 0; background: transparent; padding: 10px 16px; cursor: pointer; font-size: 14px; color: var(--rt-text-primary); }
-
-/* LAYOUT */
-.layout {
-	flex: 1; display: grid;
-	grid-template-columns: 256px 1fr;
-	width: 100%;
-}
-
-/* SIDEBAR */
-.sidebar {
-	display: flex; flex-direction: column; justify-content: space-between;
-	border-right: 1px solid var(--rt-border);
-	background: var(--rt-bg-sidebar);
-	transition: background 0.2s, border-color 0.2s;
-}
-.nav { display: flex; flex-direction: column; gap: 4px; padding: 24px 16px; }
-.navItem {
-	position: relative; height: 48px; display: flex; align-items: center; gap: 12px;
-	padding: 0 0 0 16px; background: transparent; border: 0; border-radius: 12px;
-	color: var(--rt-nav-text); text-align: left; font-size: 15px; font-weight: 500;
-	line-height: 1.5; cursor: pointer; transition: all 0.2s;
-}
-.navItem:hover { background: var(--rt-nav-hover-bg); color: var(--rt-text-secondary); }
-.navItem--active { background: var(--rt-nav-active-bg); color: var(--rt-nav-active-text); }
-.navItem--active .navIcon { color: var(--rt-nav-active-text); }
-.navActiveIndicator {
-	position: absolute; left: 0; top: 12px; bottom: 12px;
-	width: 4px; border-radius: 0 4px 4px 0; background: var(--rt-accent);
-}
-.navIcon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
-
-.sidebarFooter {
-	display: flex; flex-direction: column; align-items: center; justify-content: center;
-	gap: 6px; padding: 24px; text-align: center;
-}
-.sidebarMark {
-	width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-	border-radius: 4px; background: var(--rt-accent); color: #fff; font-size: 12px; font-weight: 700;
-}
-.sidebarName { margin: 0; font-size: 12px; font-weight: 600; color: var(--rt-text-secondary); }
-.sidebarSubname { margin: 0; font-size: 12px; color: var(--rt-text-muted); }
-
 /* MAIN CONTENT */
 .content { background: var(--rt-bg-page); display: flex; flex-direction: column; transition: background 0.2s; }
 .contentBox { padding: 32px 40px; display: flex; flex-direction: column; gap: 32px; }
@@ -138,7 +47,6 @@
 }
 .statIconPurple { width: 48px; height: 48px; border-radius: 12px; background: var(--rt-stat-icon-purple-bg); color: var(--rt-accent); display: flex; align-items: center; justify-content: center; }
 .statIconOrange { width: 48px; height: 48px; border-radius: 12px; background: var(--rt-stat-icon-orange-bg); color: #ea580c; display: flex; align-items: center; justify-content: center; }
-.statIconYellow { width: 48px; height: 48px; border-radius: 12px; background: var(--rt-stat-icon-yellow-bg); color: #ca8a04; display: flex; align-items: center; justify-content: center; }
 .statIconGreen { width: 48px; height: 48px; border-radius: 12px; background: var(--rt-stat-icon-green-bg); color: #16a34a; display: flex; align-items: center; justify-content: center; }
 
 .statText { display: flex; flex-direction: column; gap: 4px; }
@@ -155,8 +63,6 @@
 .tdIconWrapper { display: flex; align-items: center; gap: 12px; font-variant-numeric: tabular-nums; }
 .tdIconPurple { width: 28px; height: 28px; border-radius: 8px; background: var(--rt-stat-icon-purple-bg); color: var(--rt-accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .tdIconOrange { width: 28px; height: 28px; border-radius: 8px; background: var(--rt-stat-icon-orange-bg); color: #ea580c; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.tdIconYellow { width: 28px; height: 28px; border-radius: 8px; background: var(--rt-stat-icon-yellow-bg); color: #ca8a04; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.tdIconGreen { width: 28px; height: 28px; border-radius: 8px; background: var(--rt-stat-icon-green-bg); color: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
 .tdDetails { color: var(--rt-text-muted); font-weight: 400; }
 .tdIp { font-variant-numeric: tabular-nums; color: var(--rt-text-muted); }
@@ -164,8 +70,6 @@
 .typeBadge { display: inline-flex; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
 .typeBadgePurple { color: var(--rt-badge-purple-text); background: var(--rt-badge-purple-bg); }
 .typeBadgeOrange { color: #ea580c; background: var(--rt-stat-icon-orange-bg); }
-.typeBadgeYellow { color: #ca8a04; background: var(--rt-stat-icon-yellow-bg); }
-.typeBadgeGreen { color: var(--rt-badge-success-text); background: var(--rt-badge-success-bg); }
 
 /* PAGINATION */
 .pagination { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 16px 24px; background: var(--rt-bg-card); transition: background 0.2s; flex-wrap: wrap; }
@@ -174,64 +78,8 @@
 .pageBtnActive { background: var(--rt-nav-active-bg); color: var(--rt-nav-active-text); }
 .pageBtnText { padding: 0 12px; height: 36px; display: flex; align-items: center; border: none; background: transparent; color: var(--rt-text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .pageBtnText:hover { color: var(--rt-text-primary); }
-.pageEllipsis { color: var(--rt-text-muted); padding: 0 4px; }
-
-.burger {
-	display: none;
-	background: transparent;
-	border: none;
-	color: #fff;
-	cursor: pointer;
-	padding: 0;
-	align-items: center;
-	justify-content: center;
-}
 
 @media (max-width: 1024px) {
-	.burger {
-		display: flex;
-	}
-
-	.topbar {
-		padding: 0 16px;
-	}
-
-	.brandLogo {
-		width: 32px;
-		height: 32px;
-		font-size: 16px;
-		border-radius: 12px;
-	}
-
-	.brandSubtitle {
-		display: none;
-	}
-
-	.profileInfo {
-		display: none;
-	}
-
-	.layout {
-		grid-template-columns: 1fr;
-		position: relative;
-	}
-
-	.sidebar {
-		position: fixed;
-		left: -256px;
-		top: 64px;
-		bottom: 0;
-		width: 256px;
-		z-index: 10;
-		transition: left 0.3s ease;
-		box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
-		min-height: auto;
-	}
-
-	.sidebar--open {
-		left: 0;
-	}
-
 	.contentBox {
 		padding: 24px 16px;
 	}
@@ -259,7 +107,18 @@
 	}
 
 	.table {
-		min-width: 1000px;
+		min-width: unset;
+		width: 100%;
+	}
+
+	.responsiveHide {
+		display: none;
+	}
+
+	.table th,
+	.table td {
+		padding: 12px 8px;
+		font-size: 13px;
 	}
 
 	.contentHeader {
@@ -273,10 +132,3 @@
 		justify-content: center;
 	}
 }
-
-@media (max-width: 480px) {
-	.brandTitle {
-		font-size: 14px;
-	}
-}
-
