@@ -14,8 +14,8 @@ export default defineConfig(({ mode }) => {
 		plugins: [react()],
 		define: {
 			__IS_DEV__: JSON.stringify(isDev),
-			// В деве используем пустую строку, чтобы работал прокси, в билде — полный URL
-			__API__: JSON.stringify(isDev ? "" : API_URL),
+			// Используем пустую строку, чтобы запросы были относительными (для прокси в деве и Vercel в билде)
+			__API__: JSON.stringify(""),
 			__API_LOGGING__: JSON.stringify(API_LOGGING === "true"),
 			__SESSION_DURATION_HOURS__: JSON.stringify(Number(SESSION_DURATION) || 4),
 		},
